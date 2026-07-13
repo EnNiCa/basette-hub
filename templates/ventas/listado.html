@@ -6,35 +6,64 @@
 </head>
 <body>
     <h1>Ventas</h1>
-    <p><a href="{{ url_for('ventas.nueva_venta') }}">+ Nueva venta</a></p>
     <p><a href="{{ url_for('inicio') }}">Volver al inicio</a></p>
+    <p><a href="{{ url_for('ventas.nueva_venta') }}">+ Nueva venta</a></p>
 
     <table border="1" cellpadding="6">
         <thead>
             <tr>
                 <th>Cliente</th>
+                <th>DNI</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>CUPS</th>
+                <th>Nº cuenta</th>
                 <th>Módulo</th>
                 <th>Compañía</th>
                 <th>Tarifa</th>
                 <th>Comercial</th>
                 <th>Estado</th>
-                <th>Fecha</th>
+                <th>Fecha firma</th>
+                <th>Fecha activación</th>
+                <th>Fecha venta</th>
+                {% if es_admin %}
+                <th>Fecha liquidación</th>
+                <th>Importe a liquidar</th>
+                <th>Fecha descomisión</th>
+                <th>Importe descomisionado</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for venta in ventas %}
             <tr>
                 <td><a href="{{ url_for('ventas.ver_venta', venta_id=venta.id) }}">{{ venta.nombre }} {{ venta.apellidos }}</a></td>
+                <td>{{ venta.dni }}</td>
+                <td>{{ venta.telefono or '-' }}</td>
+                <td>{{ venta.email or '-' }}</td>
+                <td>{{ venta.cups or '-' }}</td>
+                <td>{{ venta.numero_cuenta or '-' }}</td>
                 <td>{{ venta.modulo }}</td>
                 <td>{{ venta.compania }}</td>
                 <td>{{ venta.tarifa }}</td>
                 <td>{{ venta.comercial }}</td>
                 <td>{{ venta.estado }}</td>
+                <td>{{ venta.fecha_firma.strftime('%d/%m/%Y') if venta.fecha_firma else '-' }}</td>
+                <td>{{ venta.fecha_activacion.strftime('%d/%m/%Y') if venta.fecha_activacion else '-' }}</td>
                 <td>{{ venta.fecha_venta.strftime('%d/%m/%Y') }}</td>
+                {% if es_admin %}
+                <td>{{ venta.fecha_liquidacion.strftime('%d/%m/%Y') if venta.fecha_liquidacion else '-' }}</td>
+                <td>{{ venta.importe_liquidar if venta.importe_liquidar is not none else '-' }}</td>
+                <td>{{ venta.fecha_descomision.strftime('%d/%m/%Y') if venta.fecha_descomision else '-' }}</td>
+                <td>{{ venta.importe_descomisionado if venta.importe_descomisionado is not none else '-' }}</td>
+                {% endif %}
             </tr>
             {% else %}
             <tr>
-                <td colspan="7">No hay ventas todavía.</td>
+                <td colspan="{{ 18 if es_admin else 14 }}">No hay ventas todavía.</td>
             </tr>
             {% endfor %}
         </tbody>
+    </table>
+</body>
+</html>
