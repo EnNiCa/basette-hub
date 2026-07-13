@@ -3,7 +3,7 @@ from flask import g, current_app
 
 def get_db():
     if 'db' not in g:
-        g.db = mysql.connector.connect(**current_app.config(['DB_CONFIG']))
+        g.db = mysql.connector.connect(**current_app.config['DB_CONFIG'])
     return g.db
 
 def close_db(e=None):
