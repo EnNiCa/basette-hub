@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ventas - Basette Hub</title>
+</head>
+<body>
+    <h1>Ventas</h1>
+    <p><a href="{{ url_for('inicio') }}">Volver al inicio</a></p>
+
+    <table border="1" cellpadding="6">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Módulo</th>
+                <th>Compañía</th>
+                <th>Tarifa</th>
+                <th>Comercial</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.nombre }} {{ venta.apellidos }}</td>
+                <td>{{ venta.modulo }}</td>
+                <td>{{ venta.compania }}</td>
+                <td>{{ venta.tarifa }}</td>
+                <td>{{ venta.comercial }}</td>
+                <td>{{ venta.estado }}</td>
+                <td>{{ venta.fecha_venta.strftime('%d/%m/%Y') }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">No hay ventas todavía.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
