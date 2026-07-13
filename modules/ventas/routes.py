@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, session, request, redirect, url_for, flash
+import os
+from flask import Blueprint, render_template, session, request, redirect, url_for, flash, current_app, abort
 from extensions import get_db
 from auth.decorators import login_requerido
 from auth.permisos import ids_visibles
 from utils.validaciones import dni_valido, telefono_valido, cups_valido, iban_valido
+from werkzeug.utils import secure_filename
 
 ventas_bp = Blueprint('ventas', __name__, url_prefix='/ventas')
 
@@ -110,3 +112,74 @@ def nueva_venta():
         tarifas=tarifas,
         canales=canales
     )
+    
+@ventas_bp.route('/<int:venta_id>')
+@login_requerido
+def ver_venta(venta_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute(
+        """
+        SELECT v.*, c.nombre AS compania, t.nombre AS tarifa, u.nombre AS comercial
+        FROM ventas v
+        JOIN companias c ON v.compania_id = c.id
+        JOIN tarifas t ON v.tarifa_id = t.id
+        JOIN usuarios u ON v.comercial_id = u.id
+        WHERE v.id = %s
+        """,
+        (venta_id,)
+    )
+    venta = cursor.fetchone()
+
+    if venta is None:
+        abort(404)
+
+    visibles = ids_visibles(session['usuario_id'], session['rol'])
+    if visibles is not None and venta['comercial_id'] not in visibles:
+        abort(403)
+
+    cursor.execute(
+        "SELECT id, nombre_archivo, ruta_archivo, fecha_subida FROM venta_archivos WHERE venta_id = %s",
+        (venta_id,)
+    )
+    archivos = cursor.fetchall()
+
+    return render_template('ventas/detalle.html', venta=venta, archivos=archivos)
+
+
+@ventas_bp.route('/<int:venta_id>/archivo', methods=['POST'])
+@login_requerido
+def subir_archivo(venta_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("SELECT comercial_id FROM ventas WHERE id = %s", (venta_id,))
+    venta = cursor.fetchone()
+    if venta is None:
+        abort(404)
+
+    visibles = ids_visibles(session['usuario_id'], session['rol'])
+    if visibles is not None and venta['comercial_id'] not in visibles:
+        abort(403)
+
+    archivo = request.files.get('archivo')
+
+    if archivo is None or archivo.filename == '':
+        flash('No se ha seleccionado ningún archivo.')
+        return redirect(url_for('ventas.ver_venta', venta_id=venta_id))
+
+    nombre_seguro = secure_filename(archivo.filename)
+    nombre_final = f"{venta_id}_{nombre_seguro}"
+    ruta_completa = os.path.join(current_app.config['UPLOAD_FOLDER'], nombre_final)
+
+    archivo.save(ruta_completa)
+
+    cursor.execute(
+        "INSERT INTO venta_archivos (venta_id, nombre_archivo, ruta_archivo) VALUES (%s, %s, %s)",
+        (venta_id, archivo.filename, ruta_completa)
+    )
+    db.commit()
+
+    flash('Archivo subido correctamente.')
+    return redirect(url_for('ventas.ver_venta', venta_id=venta_id))

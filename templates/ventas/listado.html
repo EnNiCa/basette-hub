@@ -24,7 +24,7 @@
         <tbody>
             {% for venta in ventas %}
             <tr>
-                <td>{{ venta.nombre }} {{ venta.apellidos }}</td>
+                <td><a href="{{ url_for('ventas.ver_venta', venta_id=venta.id) }}">{{ venta.nombre }} {{ venta.apellidos }}</a></td>
                 <td>{{ venta.modulo }}</td>
                 <td>{{ venta.compania }}</td>
                 <td>{{ venta.tarifa }}</td>
