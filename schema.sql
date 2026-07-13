@@ -55,8 +55,21 @@ CREATE TABLE ventas (
     compania_id INT NOT NULL,
     tarifa_id INT NOT NULL,
     canal_id INT,
-    estado ENUM('pendiente', 'activa', 'incidencia', 'baja') DEFAULT 'pendiente',
-    fecha_venta DATETIME DEFAULT CURRENT_TIMESTAMP,
+    nombre VARCHAR(120),
+    apellidos VARCHAR(150),
+    dni VARCHAR(15),
+    cups VARCHAR(30),
+    telefono VARCHAR(30),
+    email VARCHAR(160),
+    numero_cuenta VARCHAR(34),
+    fecha_firma DATE,
+    fecha_activacion DATE,
+    fecha_liquidacion DATE,
+    fecha_descomision DATE,
+    importe_liquidar DECIMAL(10,2),
+    importe_descomisionado DECIMAL(10,2),
+    estado ENUM('nulo','pendiente_carga','pendiente_firma','scoring','activacion','activa','incidencia','baja') NOT NULL DEFAULT 'nulo',
+    fecha_venta DATE DEFAULT (CURRENT_DATE),
     FOREIGN KEY (lead_id) REFERENCES leads(id),
     FOREIGN KEY (comercial_id) REFERENCES usuarios(id),
     FOREIGN KEY (compania_id) REFERENCES companias(id),
@@ -159,4 +172,13 @@ CREATE TABLE noticias (
     contenido TEXT NOT NULL,
     fecha_publicacion DATETIME DEFAULT CURRENT_TIMESTAMP,
     activa BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE incidencia_archivos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    incidencia_id INT NOT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta_archivo VARCHAR(500) NOT NULL,
+    fecha_subida DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (incidencia_id) REFERENCES incidencias(id)
 );
