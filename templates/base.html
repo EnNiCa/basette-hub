@@ -3,20 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block titulo %}Basette Hub{% endblock %}</title>
-    <style>
-        nav { background: #1e293b; padding: 10px 20px; }
-        nav ul { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; }
-        nav > ul > li { position: relative; }
-        nav a { color: white; text-decoration: none; }
-
-        .dropdown { display: none; position: absolute; top: 100%; left: 0;
-                    background: #334155; min-width: 160px; padding: 8px 0; z-index: 10; }
-        .dropdown li { padding: 4px 16px; }
-        nav > ul > li:hover .dropdown { display: block; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
 </head>
 <body>
     <nav>
+        <div class="nav-brand">Basette Hub</div>
         <ul>
             <li><a href="{{ url_for('inicio') }}">Inicio</a></li>
             <li>
@@ -28,14 +19,26 @@
                     <li><a href="{{ url_for('ventas.listar_ventas', modulo='placas_solares') }}">Placas solares</a></li>
                 </ul>
             </li>
-            <li><a href="{{ url_for('auth.logout') }}">Cerrar sesión</a></li>
+            <li class="nav-perfil">
+                <a href="#" class="perfil-icono">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
+                    </svg>
+                </a>
+                <ul class="dropdown dropdown-derecha">
+                    <li><a href="#">Mi perfil</a></li>
+                    <li><a href="#">Configuración</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Cerrar sesión</a></li>
+                </ul>
+            </li>
         </ul>
     </nav>
 
     <main style="padding: 20px;">
         {% with mensajes = get_flashed_messages() %}
             {% if mensajes %}
-                <ul>
+                <ul class="mensajes-flash">
                     {% for mensaje in mensajes %}
                         <li>{{ mensaje }}</li>
                     {% endfor %}

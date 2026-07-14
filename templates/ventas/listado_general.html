@@ -4,61 +4,27 @@
 
 {% block contenido %}
 <h1>Ventas - Todas</h1>
-<p><a href="{{ url_for('ventas.nueva_venta') }}">+ Nueva venta</a></p>
+<a href="{{ url_for('ventas.nueva_venta') }}" class="boton-nuevo">+ Nueva venta</a>
 
-<table border="1" cellpadding="6">
+<div class="tabla-contenedor">
+<table>
     <thead>
         <tr>
-            <th>Cliente</th>
-            <th>DNI</th>
-            <th>Dirección</th>
-            <th>C.P.</th>
-            <th>Teléfono</th>
-            <th>Email</th>
-            <th>CUPS</th>
-            <th>Nº Cuenta</th>
-            <th>Comercial</th>
-            <th>Canal</th>
+            {% include "ventas/_cabeceras_comunes.html" %}
             <th>Módulo</th>
-            <th>Compañía</th>
-            <th>Tarifa</th>
-            <th>Mantenimiento</th>
+            <th>CUPS</th>
+            <th>Tipo</th>
             <th>Batería</th>
-            <th>Estado</th>
-            <th>Fecha firma</th>
-            <th>Fecha activación</th>
-            <th>Fecha baja</th>
-            {% if es_admin %}
-            <th>Fecha liquidación</th>
-            <th>Importe compañía</th>
-            <th>Fecha descomisión</th>
-            <th>Importe descomisión</th>
-            {% endif %}
-            <th>Fecha pago comercial</th>
-            <th>Importe pago comercial</th>
-            <th>Fecha descomisión comercial</th>
-            <th>Importe descomisión comercial</th>
-            <th>Observaciones</th>
-            <th>Archivos</th>
+            {% include "ventas/_cabeceras_comunes_final.html" %}
         </tr>
     </thead>
     <tbody>
         {% for venta in ventas %}
         <tr>
-            <td>{{ venta.nombre }} {{ venta.apellidos }}</td>
-            <td>{{ venta.dni }}</td>
-            <td>{{ venta.direccion or '-' }}</td>
-            <td>{{ venta.cp or '-' }}</td>
-            <td>{{ venta.telefono or '-' }}</td>
-            <td>{{ venta.email or '-' }}</td>
+            {% include "ventas/_celdas_comunes.html" %}
+            <td>{{ venta.modulo }}</td>
             <td>{{ venta.cups or '-' }}</td>
-            <td>{{ venta.numero_cuenta or '-' }}</td>
-            <td>{{ venta.comercial }}</td>
-            <td>{{ venta.canal or '-' }}</td>
-            <td>{{ venta.modulo }}{% if venta.tipo_energia %} ({{ venta.tipo_energia }}){% endif %}</td>
-            <td>{{ venta.compania }}</td>
-            <td>{{ venta.tarifa }}</td>
-            <td>{{ 'Sí' if venta.mantenimiento else 'No' }}</td>
+            <td>{{ venta.tipo_energia or '-' }}</td>
             <td>
                 {% if venta.modulo == 'placas_solares' or venta.tipo_energia == 'luz' %}
                     {{ 'Sí' if venta.bateria else 'No' }}
@@ -66,41 +32,14 @@
                     -
                 {% endif %}
             </td>
-            <td>
-                {% if es_admin %}
-                <form method="POST" action="{{ url_for('ventas.actualizar_estado', venta_id=venta.id) }}">
-                    <input type="hidden" name="modulo_actual" value="{{ venta.modulo }}">
-                    <select name="estado" onchange="this.form.submit()">
-                        {% for est in ['nulo','pendiente_carga','pendiente_firma','scoring','activacion','activa','incidencia','baja'] %}
-                        <option value="{{ est }}" {% if est == venta.estado %}selected{% endif %}>{{ est }}</option>
-                        {% endfor %}
-                    </select>
-                </form>
-                {% else %}
-                    {{ venta.estado }}
-                {% endif %}
-            </td>
-            <td>{{ venta.fecha_firma.strftime('%d/%m/%Y') if venta.fecha_firma else '-' }}</td>
-            <td>{{ venta.fecha_activacion.strftime('%d/%m/%Y') if venta.fecha_activacion else '-' }}</td>
-            <td>{{ venta.fecha_baja.strftime('%d/%m/%Y') if venta.fecha_baja else '-' }}</td>
-            {% if es_admin %}
-            <td>{{ venta.fecha_liquidacion.strftime('%d/%m/%Y') if venta.fecha_liquidacion else '-' }}</td>
-            <td>{{ venta.importe_liquidar if venta.importe_liquidar is not none else '-' }}</td>
-            <td>{{ venta.fecha_descomision.strftime('%d/%m/%Y') if venta.fecha_descomision else '-' }}</td>
-            <td>{{ venta.importe_descomisionado if venta.importe_descomisionado is not none else '-' }}</td>
-            {% endif %}
-            <td>{{ venta.fecha_pago_comercial.strftime('%d/%m/%Y') if venta.fecha_pago_comercial else '-' }}</td>
-            <td>{{ venta.importe_pago_comercial if venta.importe_pago_comercial is not none else '-' }}</td>
-            <td>{{ venta.fecha_descomision_comercial.strftime('%d/%m/%Y') if venta.fecha_descomision_comercial else '-' }}</td>
-            <td>{{ venta.importe_descomisionado_comercial if venta.importe_descomisionado_comercial is not none else '-' }}</td>
-            <td>{{ venta.observaciones or '-' }}</td>
-            <td><a href="{{ url_for('ventas.ver_archivos', venta_id=venta.id) }}">Ver archivos</a></td>
+            {% include "ventas/_celdas_comunes_final.html" %}
         </tr>
         {% else %}
         <tr>
-            <td colspan="30">No hay ventas todavía.</td>
+            <td colspan="28">No hay ventas todavía.</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% endblock %}

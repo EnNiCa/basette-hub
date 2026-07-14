@@ -4,9 +4,10 @@
 
 {% block contenido %}
 <h1>Ventas - Energía</h1>
-<p><a href="{{ url_for('ventas.nueva_venta') }}">+ Nueva venta</a></p>
+<a href="{{ url_for('ventas.nueva_venta') }}" class="boton-nuevo">+ Nueva venta</a>
 
-<table border="1" cellpadding="6">
+<div class="tabla-contenedor">
+<table>
     <thead>
         <tr>
             {% include "ventas/_cabeceras_comunes.html" %}
@@ -38,4 +39,5 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% endblock %}

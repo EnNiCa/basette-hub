@@ -18,21 +18,22 @@
 ] %}
 
 {% for clave, etiqueta in categorias_info %}
-<h3>{{ etiqueta }}</h3>
+<div class="bloque-categoria">
+    <h3>{{ etiqueta }}</h3>
 
-<ul>
-    {% for archivo in archivos_por_categoria[clave] %}
-    <li>{{ archivo.nombre_archivo }} ({{ archivo.fecha_subida.strftime('%d/%m/%Y') }})</li>
-    {% else %}
-    <li>Sin archivos.</li>
-    {% endfor %}
-</ul>
+    <ul>
+        {% for archivo in archivos_por_categoria[clave] %}
+        <li>{{ archivo.nombre_archivo }} ({{ archivo.fecha_subida.strftime('%d/%m/%Y') }})</li>
+        {% else %}
+        <li>Sin archivos.</li>
+        {% endfor %}
+    </ul>
 
-<form method="POST" action="{{ url_for('ventas.subir_archivo', venta_id=venta.id) }}" enctype="multipart/form-data">
-    <input type="hidden" name="categoria" value="{{ clave }}">
-    <input type="file" name="archivo" multiple required>
-    <button type="submit">Subir</button>
-</form>
-<hr>
+    <form method="POST" action="{{ url_for('ventas.subir_archivo', venta_id=venta.id) }}" enctype="multipart/form-data">
+        <input type="hidden" name="categoria" value="{{ clave }}">
+        <input type="file" name="archivo" multiple required>
+        <button type="submit">Subir</button>
+    </form>
+</div>
 {% endfor %}
 {% endblock %}

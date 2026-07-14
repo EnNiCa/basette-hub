@@ -1,0 +1,268 @@
+:root {
+    --azul-oscuro: #1e293b;
+    --azul-oscuro-suave: #334155;
+    --azul-acento: #2563eb;
+    --gris-borde: #e2e8f0;
+    --gris-fondo: #f8fafc;
+    --texto: #334155;
+    --texto-suave: #64748b;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--gris-fondo);
+    color: var(--texto);
+    margin: 0;
+}
+
+main {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 1.5rem;
+    color: var(--azul-oscuro);
+    margin-bottom: 4px;
+}
+
+h3 {
+    color: var(--azul-oscuro);
+    font-size: 1rem;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--gris-borde);
+    padding-bottom: 4px;
+}
+
+a {
+    color: var(--azul-acento);
+    text-decoration: none;
+}
+
+/* ===== Barra de navegación ===== */
+nav {
+    background: var(--azul-oscuro);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    height: 56px;
+}
+
+.nav-brand {
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-right: 32px;
+    white-space: nowrap;
+}
+
+nav > ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    flex: 1;
+}
+
+nav > ul > li {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+nav > ul > li > a {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    padding: 8px 4px;
+}
+
+nav > ul > li > a:hover {
+    color: white;
+}
+
+/* Empuja el icono de perfil hacia la derecha */
+.nav-perfil {
+    margin-left: auto;
+}
+
+.perfil-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid #475569;
+}
+
+.perfil-icono svg {
+    width: 20px;
+    height: 20px;
+    stroke: #cbd5e1;
+}
+
+.nav-perfil:hover .perfil-icono {
+    border-color: white;
+}
+.nav-perfil:hover .perfil-icono svg {
+    stroke: white;
+}
+
+/* Desplegables */
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--azul-oscuro-suave);
+    min-width: 170px;
+    padding: 6px 0;
+    border-radius: 0 0 8px 8px;
+    z-index: 10;
+    list-style: none;
+    margin: 0;
+}
+
+.dropdown-derecha {
+    left: auto;
+    right: 0;
+}
+
+nav > ul > li:hover .dropdown {
+    display: block;
+}
+
+.dropdown li a {
+    display: block;
+    color: #e2e8f0;
+    padding: 8px 16px;
+    font-size: 0.88rem;
+}
+
+.dropdown li a:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Botón de acción ===== */
+.boton-nuevo {
+    display: inline-block;
+    background: var(--azul-acento);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin: 8px 0 16px;
+}
+.boton-nuevo:hover {
+    background: #1d4ed8;
+}
+
+/* ===== Tabla de ventas ===== */
+.tabla-contenedor {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--gris-borde);
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+thead th {
+    background: var(--azul-oscuro);
+    color: white;
+    text-align: left;
+    padding: 10px 12px;
+    position: sticky;
+    top: 0;
+}
+
+tbody td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--gris-borde);
+}
+
+tbody tr:nth-child(even) {
+    background: var(--gris-fondo);
+}
+
+tbody tr:hover {
+    background: #eff6ff;
+}
+
+td select {
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--gris-borde);
+    font-size: 0.8rem;
+}
+
+/* ===== Mensajes flash ===== */
+.mensajes-flash {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+}
+.mensajes-flash li {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+/* ===== Archivos adjuntos ===== */
+.bloque-categoria {
+    background: white;
+    border: 1px solid var(--gris-borde);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+}
+
+.bloque-categoria ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
+}
+
+.bloque-categoria li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--gris-borde);
+    font-size: 0.9rem;
+    color: var(--texto-suave);
+}
+
+.bloque-categoria form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.bloque-categoria button {
+    background: var(--azul-acento);
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+.bloque-categoria button:hover {
+    background: #1d4ed8;
+}

@@ -7,6 +7,7 @@
 <td>{{ venta.numero_cuenta or '-' }}</td>
 <td>{{ venta.comercial }}</td>
 <td>{{ venta.canal or '-' }}</td>
+<td>{{ venta.modulo|replace('_', ' ')|capitalize }}</td>
 <td>{{ venta.compania }}</td>
 <td>{{ venta.tarifa }}</td>
 <td>{{ 'Sí' if venta.mantenimiento else 'No' }}</td>
