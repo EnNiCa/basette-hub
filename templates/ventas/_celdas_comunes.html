@@ -1,0 +1,12 @@
+<td>{{ venta.nombre }} {{ venta.apellidos }}</td>
+<td>{{ venta.dni }}</td>
+<td>{{ venta.direccion or '-' }}</td>
+<td>{{ venta.cp or '-' }}</td>
+<td>{{ venta.telefono or '-' }}</td>
+<td>{{ venta.email or '-' }}</td>
+<td>{{ venta.numero_cuenta or '-' }}</td>
+<td>{{ venta.comercial }}</td>
+<td>{{ venta.canal or '-' }}</td>
+<td>{{ venta.compania }}</td>
+<td>{{ venta.tarifa }}</td>
+<td>{{ 'Sí' if venta.mantenimiento else 'No' }}</td>

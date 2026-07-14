@@ -1,12 +1,15 @@
+{% extends "base.html" %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Basette Hub</title>
+    <title>{% block titulo %}Inicio - Basette Hub{% endblock %}</title>
 </head>
 <body>
+    {% block contenido %}
     <h1>Bienvenido, {{ session['nombre'] }}</h1>
     <p>Rol: {{ session['rol'] }}</p>
+    {% endblock %}
     <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
 </body>
 </html>

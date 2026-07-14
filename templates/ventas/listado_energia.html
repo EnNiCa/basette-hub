@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block titulo %}Ventas - Energía{% endblock %}
+
+{% block contenido %}
+<h1>Ventas - Energía</h1>
+<p><a href="{{ url_for('ventas.nueva_venta') }}">+ Nueva venta</a></p>
+
+<table border="1" cellpadding="6">
+    <thead>
+        <tr>
+            {% include "ventas/_cabeceras_comunes.html" %}
+            <th>CUPS</th>
+            <th>Tipo</th>
+            <th>Batería</th>
+            {% include "ventas/_cabeceras_comunes_final.html" %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for venta in ventas %}
+        <tr>
+            {% include "ventas/_celdas_comunes.html" %}
+            <td>{{ venta.cups or '-' }}</td>
+            <td>{{ venta.tipo_energia or '-' }}</td>
+            <td>
+                {% if venta.tipo_energia == 'luz' %}
+                    {{ 'Sí' if venta.bateria else 'No' }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            {% include "ventas/_celdas_comunes_final.html" %}
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="27">No hay ventas de energía todavía.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

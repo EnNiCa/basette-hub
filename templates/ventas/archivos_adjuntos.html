@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block titulo %}Archivos - {{ venta.nombre }} {{ venta.apellidos }}{% endblock %}
+
+{% block contenido %}
+<h1>Archivos adjuntos: {{ venta.nombre }} {{ venta.apellidos }}</h1>
+<p><a href="{{ url_for('ventas.listar_ventas', modulo=venta.modulo) }}">Volver al listado</a></p>
+
+{% set categorias_info = [
+    ('dni', 'DNI'),
+    ('certificado_bancario', 'Certificado bancario'),
+    ('escritura', 'Escritura'),
+    ('justo_titulo', 'Justo Título'),
+    ('cif', 'CIF'),
+    ('facturas', 'Facturas'),
+    ('acta_comunidad', 'Acta comunidad de propietarios'),
+    ('otros', 'Otros')
+] %}
+
+{% for clave, etiqueta in categorias_info %}
+<h3>{{ etiqueta }}</h3>
+
+<ul>
+    {% for archivo in archivos_por_categoria[clave] %}
+    <li>{{ archivo.nombre_archivo }} ({{ archivo.fecha_subida.strftime('%d/%m/%Y') }})</li>
+    {% else %}
+    <li>Sin archivos.</li>
+    {% endfor %}
+</ul>
+
+<form method="POST" action="{{ url_for('ventas.subir_archivo', venta_id=venta.id) }}" enctype="multipart/form-data">
+    <input type="hidden" name="categoria" value="{{ clave }}">
+    <input type="file" name="archivo" multiple required>
+    <button type="submit">Subir</button>
+</form>
+<hr>
+{% endfor %}
+{% endblock %}

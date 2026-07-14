@@ -16,3 +16,8 @@ def iban_valido(iban):
         return True  # es opcional
     limpio = iban.replace(' ', '')
     return bool(re.fullmatch(r'ES[0-9]{22}', limpio))
+
+def cp_valido(cp):
+    if not cp:
+        return True  # es opcional, campo vacío es válido
+    return bool(re.fullmatch(r'[0-9]{5}', cp))
