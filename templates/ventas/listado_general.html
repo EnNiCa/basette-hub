@@ -6,6 +6,10 @@
 <h1>Ventas - Todas</h1>
 <a href="{{ url_for('ventas.nueva_venta') }}" class="boton-nuevo">+ Nueva venta</a>
 
+{% include "ventas/_buscador.html" %}
+
+<div class="tabla-contenedor">
+
 <div class="tabla-contenedor">
 <table>
     <thead>

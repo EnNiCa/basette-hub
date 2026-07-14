@@ -23,6 +23,7 @@ def listar_ventas_general():
     cursor = db.cursor(dictionary=True)
 
     visibles = ids_visibles(session['usuario_id'], session['rol'])
+    buscar = request.args.get('buscar', '').strip()
 
     sql = """
         SELECT v.*, c.nombre AS compania, t.nombre AS tarifa, u.nombre AS comercial,
@@ -34,12 +35,27 @@ def listar_ventas_general():
         LEFT JOIN canales ca ON v.canal_id = ca.id
         LEFT JOIN bajas b ON v.id = b.venta_id
     """
-
     parametros = []
+    condiciones = []
+
     if visibles is not None:
         placeholders = ','.join(['%s'] * len(visibles))
-        sql += f" WHERE v.comercial_id IN ({placeholders})"
-        parametros = visibles
+        condiciones.append(f"v.comercial_id IN ({placeholders})")
+        parametros += visibles
+
+    if buscar:
+        condiciones.append("""(
+            CONCAT(v.nombre, ' ', v.apellidos) LIKE %s
+            OR v.dni LIKE %s
+            OR v.telefono LIKE %s
+            OR v.email LIKE %s
+            OR v.cups LIKE %s
+        )""")
+        comodin = f"%{buscar}%"
+        parametros += [comodin, comodin, comodin, comodin, comodin]
+
+    if condiciones:
+        sql += " WHERE " + " AND ".join(condiciones)
 
     sql += " ORDER BY v.id DESC"
 
@@ -48,7 +64,7 @@ def listar_ventas_general():
 
     es_admin = session['rol'] == 'admin'
 
-    return render_template('ventas/listado_general.html', ventas=ventas, es_admin=es_admin)
+    return render_template('ventas/listado_general.html', ventas=ventas, es_admin=es_admin, buscar=buscar)
 
 @ventas_bp.route('/')
 @login_requerido
@@ -57,10 +73,12 @@ def listar_ventas():
     cursor = db.cursor(dictionary=True)
 
     visibles = ids_visibles(session['usuario_id'], session['rol'])
-    
+
     modulo_filtro = request.args.get('modulo', 'energia')
     if modulo_filtro not in MODULOS_VALIDOS:
         modulo_filtro = 'energia'
+
+    buscar = request.args.get('buscar', '').strip()
 
     sql = """
         SELECT v.*, c.nombre AS compania, t.nombre AS tarifa, u.nombre AS comercial,
@@ -73,12 +91,23 @@ def listar_ventas():
         LEFT JOIN bajas b ON v.id = b.venta_id
         WHERE v.modulo = %s
     """
-
     parametros = [modulo_filtro]
+
     if visibles is not None:
         placeholders = ','.join(['%s'] * len(visibles))
         sql += f" AND v.comercial_id IN ({placeholders})"
         parametros += visibles
+
+    if buscar:
+        sql += """ AND (
+            CONCAT(v.nombre, ' ', v.apellidos) LIKE %s
+            OR v.dni LIKE %s
+            OR v.telefono LIKE %s
+            OR v.email LIKE %s
+            OR v.cups LIKE %s
+        )"""
+        comodin = f"%{buscar}%"
+        parametros += [comodin, comodin, comodin, comodin, comodin]
 
     sql += " ORDER BY v.id DESC"
 
@@ -91,7 +120,8 @@ def listar_ventas():
         f'ventas/listado_{modulo_filtro}.html',
         ventas=ventas,
         es_admin=es_admin,
-        modulo_actual=modulo_filtro
+        modulo_actual=modulo_filtro,
+        buscar=buscar
     )
     
 @ventas_bp.route('/<int:venta_id>/estado', methods=['POST'])

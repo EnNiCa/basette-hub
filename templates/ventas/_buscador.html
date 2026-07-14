@@ -1,0 +1,12 @@
+<form method="GET" action="{{ url_for(request.endpoint) }}" style="margin-bottom: 16px;">
+    {% if modulo_actual %}
+    <input type="hidden" name="modulo" value="{{ modulo_actual }}">
+    {% endif %}
+    <input type="text" name="buscar" value="{{ buscar or '' }}"
+       placeholder="Buscar por nombre, DNI, teléfono, email o CUPS..."
+           style="padding: 8px 12px; border: 1px solid var(--gris-borde); border-radius: 6px; width: 320px;">
+    <button type="submit" class="boton-nuevo" style="margin: 0;">Buscar</button>
+    {% if buscar %}
+    <a href="{{ url_for(request.endpoint, modulo=modulo_actual) }}" style="margin-left: 8px;">Quitar filtro</a>
+    {% endif %}
+</form>
