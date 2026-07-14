@@ -25,10 +25,12 @@
                 <th>Estado</th>
                 <th>Fecha firma</th>
                 <th>Fecha activación</th>
-                <th>Fecha venta</th>
+                <th>Fecha baja</th>
+                <th>Mantenimiento</th>
+                <th>Batería</th>
                 {% if es_admin %}
                 <th>Fecha liquidación</th>
-                <th>Importe a liquidar</th>
+                <th>Importe compañía</th>
                 <th>Fecha descomisión</th>
                 <th>Importe descomisionado</th>
                 {% endif %}
@@ -50,7 +52,9 @@
                 <td>{{ venta.estado }}</td>
                 <td>{{ venta.fecha_firma.strftime('%d/%m/%Y') if venta.fecha_firma else '-' }}</td>
                 <td>{{ venta.fecha_activacion.strftime('%d/%m/%Y') if venta.fecha_activacion else '-' }}</td>
-                <td>{{ venta.fecha_venta.strftime('%d/%m/%Y') }}</td>
+                <td>{{ venta.fecha_baja.strftime('%d/%m/%Y') if venta.fecha_baja else '-' }}</td>
+                <td>{{ 'Sí' if venta.mantenimiento else 'No' }}</td>
+                <td>{{ 'Sí' if venta.bateria else 'No' }}</td>
                 {% if es_admin %}
                 <td>{{ venta.fecha_liquidacion.strftime('%d/%m/%Y') if venta.fecha_liquidacion else '-' }}</td>
                 <td>{{ venta.importe_liquidar if venta.importe_liquidar is not none else '-' }}</td>
@@ -60,7 +64,7 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="{{ 18 if es_admin else 14 }}">No hay ventas todavía.</td>
+                <td colspan="{{ 20 if es_admin else 16 }}">No hay ventas todavía.</td>
             </tr>
             {% endfor %}
         </tbody>

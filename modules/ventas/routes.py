@@ -17,12 +17,14 @@ def listar_ventas():
     visibles = ids_visibles(session['usuario_id'], session['rol'])
 
     sql = """
-        SELECT v.*, c.nombre AS compania, t.nombre AS tarifa, u.nombre AS comercial
-        FROM ventas v
-        JOIN companias c ON v.compania_id = c.id
-        JOIN tarifas t ON v.tarifa_id = t.id
-        JOIN usuarios u ON v.comercial_id = u.id
-    """
+    SELECT v.*, c.nombre AS compania, t.nombre AS tarifa, u.nombre AS comercial,
+           b.fecha_baja AS fecha_baja
+    FROM ventas v
+    JOIN companias c ON v.compania_id = c.id
+    JOIN tarifas t ON v.tarifa_id = t.id
+    JOIN usuarios u ON v.comercial_id = u.id
+    LEFT JOIN bajas b ON v.id = b.venta_id
+"""
 
     parametros = ()
     if visibles is not None:
@@ -30,7 +32,7 @@ def listar_ventas():
         sql += f" WHERE v.comercial_id IN ({placeholders})"
         parametros = tuple(visibles)
 
-    sql += " ORDER BY v.fecha_venta DESC"
+    sql += " ORDER BY v.id DESC"
 
     cursor.execute(sql, parametros)
     ventas = cursor.fetchall()
