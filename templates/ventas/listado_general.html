@@ -15,7 +15,6 @@
     <thead>
         <tr>
             {% include "ventas/_cabeceras_comunes.html" %}
-            <th>Módulo</th>
             <th>CUPS</th>
             <th>Tipo</th>
             <th>Batería</th>
@@ -26,7 +25,6 @@
         {% for venta in ventas %}
         <tr>
             {% include "ventas/_celdas_comunes.html" %}
-            <td>{{ venta.modulo }}</td>
             <td>{{ venta.cups or '-' }}</td>
             <td>{{ venta.tipo_energia or '-' }}</td>
             <td>
