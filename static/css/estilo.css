@@ -187,6 +187,7 @@ nav > ul > li:hover .dropdown {
     background: white;
     border-radius: 8px;
     border: 1px solid var(--gris-borde);
+    max-height: 480px;
 }
 
 table {
