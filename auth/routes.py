@@ -24,7 +24,7 @@ def login():
             session['rol'] = usuario['rol']
             return redirect(url_for('inicio'))
 
-        flash('Email o contraseña incorrectos')
+        flash('Email o contraseña incorrectos', 'error')
         return redirect(url_for('auth.login'))
 
     return render_template('auth/login.html')

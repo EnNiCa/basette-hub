@@ -232,13 +232,29 @@ td select {
     margin: 0 0 16px;
 }
 .mensajes-flash li {
-    background: #fef2f2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
     padding: 10px 14px;
     border-radius: 6px;
     margin-bottom: 6px;
     font-size: 0.9rem;
+    border: 1px solid;
+}
+
+.mensaje-error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border-color: #fecaca;
+}
+
+.mensaje-exito {
+    background: #f0fdf4;
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+
+.mensaje-message {
+    background: #f8fafc;
+    color: var(--texto);
+    border-color: var(--gris-borde);
 }
 
 /* ===== Archivos adjuntos ===== */
@@ -358,4 +374,114 @@ td select {
 
 .login-card .mensajes-flash {
     margin: 0 0 8px;
+}
+
+/* ===== Formulario de nueva venta ===== */
+.formulario-card {
+    background: white;
+    border: 1px solid var(--gris-borde);
+    border-radius: 8px;
+    padding: 24px 28px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 4px 20px;
+}
+
+.form-seccion-titulo {
+    grid-column: 1 / -1;
+}
+
+.form-seccion-titulo h3 {
+    margin-top: 12px;
+}
+
+.form-grupo {
+    margin-bottom: 12px;
+}
+
+.form-grid label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--texto);
+    margin-bottom: 6px;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+    outline: none;
+    border-color: var(--azul-acento);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.formulario-card button[type="submit"] {
+    background: var(--azul-acento);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+}
+.formulario-card button[type="submit"]:hover {
+    background: #1d4ed8;
+}
+
+/* ===== Botón "volver" ===== */
+.boton-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    color: var(--texto);
+    border: 1px solid var(--gris-borde);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+}
+
+.boton-volver:hover {
+    background: var(--gris-fondo);
+    border-color: #cbd5e1;
+    color: var(--azul-oscuro);
+}
+
+/* ===== Botón "volver" ===== */
+.boton-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    color: var(--texto);
+    border: 1px solid var(--gris-borde);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+}
+
+.boton-volver:hover {
+    background: var(--gris-fondo);
+    border-color: #cbd5e1;
+    color: var(--azul-oscuro);
 }

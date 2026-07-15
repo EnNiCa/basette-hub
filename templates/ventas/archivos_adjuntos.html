@@ -3,8 +3,8 @@
 {% block titulo %}Archivos - {{ venta.nombre }} {{ venta.apellidos }}{% endblock %}
 
 {% block contenido %}
+<a href="{{ origen }}" class="boton-volver">← Volver al listado</a>
 <h1>Archivos adjuntos: {{ venta.nombre }} {{ venta.apellidos }}</h1>
-<p><a href="{{ origen }}">Volver al listado</a></p>
 
 {% set categorias_info = [
     ('dni', 'DNI'),

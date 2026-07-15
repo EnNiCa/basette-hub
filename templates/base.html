@@ -39,11 +39,11 @@
     </nav>
 
     <main style="padding: 20px;">
-        {% with mensajes = get_flashed_messages() %}
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
             {% if mensajes %}
                 <ul class="mensajes-flash">
-                    {% for mensaje in mensajes %}
-                        <li>{{ mensaje }}</li>
+                    {% for categoria, mensaje in mensajes %}
+                        <li class="mensaje-{{ categoria }}">{{ mensaje }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}

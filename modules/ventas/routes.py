@@ -130,7 +130,7 @@ def actualizar_estado(venta_id):
     nuevo_estado = request.form.get('estado')
 
     if nuevo_estado not in ESTADOS_VALIDOS:
-        flash('Estado no válido.')
+        flash('Estado no válido.', 'error')
         return redirect(url_for('ventas.listar_ventas'))
 
     db = get_db()
@@ -141,7 +141,7 @@ def actualizar_estado(venta_id):
     )
     db.commit()
 
-    flash('Estado actualizado correctamente.')
+    flash('Estado actualizado correctamente.', 'exito')
 
     modulo_actual = request.form.get('modulo_actual', 'energia')
     return redirect(url_for('ventas.listar_ventas', modulo=modulo_actual))
@@ -174,10 +174,10 @@ def nueva_venta():
 
         if errores:
             for error in errores:
-                flash(error)
-            cursor.execute("SELECT id, nombre FROM companias")
+                flash(error, 'error')
+            cursor.execute("SELECT id, nombre, tipo_servicio FROM companias")
             companias = cursor.fetchall()
-            cursor.execute("SELECT id, nombre FROM tarifas WHERE vigente = TRUE")
+            cursor.execute("SELECT id, nombre, tipo_servicio FROM tarifas WHERE vigente = TRUE")
             tarifas = cursor.fetchall()
             cursor.execute("SELECT id, nombre FROM canales")
             canales = cursor.fetchall()
@@ -214,10 +214,10 @@ def nueva_venta():
         db.commit()
         return redirect(url_for('ventas.listar_ventas', modulo=modulo))
 
-    cursor.execute("SELECT id, nombre FROM companias")
+    cursor.execute("SELECT id, nombre, tipo_servicio FROM companias")
     companias = cursor.fetchall()
 
-    cursor.execute("SELECT id, nombre FROM tarifas WHERE vigente = TRUE")
+    cursor.execute("SELECT id, nombre, tipo_servicio FROM tarifas WHERE vigente = TRUE")
     tarifas = cursor.fetchall()
 
     cursor.execute("SELECT id, nombre FROM canales")
@@ -282,13 +282,13 @@ def subir_archivo(venta_id):
 
     categoria = request.form.get('categoria')
     if categoria not in CATEGORIAS_ARCHIVO:
-        flash('Categoría de archivo no válida.')
+        flash('Categoría de archivo no válida.', 'error')
         return redirect(url_for('ventas.ver_archivos', venta_id=venta_id))
 
     archivos = request.files.getlist('archivo')
 
     if not archivos or archivos[0].filename == '':
-        flash('No se ha seleccionado ningún archivo.')
+        flash('No se ha seleccionado ningún archivo.', 'error')
         return redirect(url_for('ventas.ver_archivos', venta_id=venta_id))
 
     for archivo in archivos:
@@ -305,5 +305,5 @@ def subir_archivo(venta_id):
         )
 
     db.commit()
-    flash('Archivo(s) subido(s) correctamente.')
+    flash('Archivo(s) subido(s) correctamente.', 'exito')
     return redirect(url_for('ventas.ver_archivos', venta_id=venta_id))
