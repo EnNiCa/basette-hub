@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block titulo %}Nuevo usuario - Basette Hub{% endblock %}
+
+{% block contenido %}
+<a href="{{ url_for('usuarios.listar_usuarios') }}" class="boton-volver">← Volver al listado</a>
+<h1>Nuevo usuario</h1>
+
+<div class="formulario-card">
+<form method="POST" action="{{ url_for('usuarios.nuevo_usuario') }}">
+    <div class="form-grid">
+        <div class="form-grupo">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" required>
+        </div>
+
+        <div class="form-grupo">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-grupo">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required minlength="8">
+        </div>
+
+        <div class="form-grupo">
+            <label for="rol">Rol</label>
+            <select id="rol" name="rol" required>
+                <option value="">-- Selecciona --</option>
+                <option value="admin">Administrador</option>
+                <option value="jefe_equipo">Jefe de equipo</option>
+                <option value="comercial">Comercial</option>
+            </select>
+        </div>
+
+        <div class="form-grupo" id="grupo-jefe" style="display: none;">
+            <label for="jefe_id">Jefe de equipo asignado</label>
+            <select id="jefe_id" name="jefe_id">
+                <option value="">-- Selecciona --</option>
+                {% for jefe in jefes %}
+                <option value="{{ jefe.id }}">{{ jefe.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <button type="submit">Crear usuario</button>
+</form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const rolSelect = document.getElementById('rol');
+    const grupoJefe = document.getElementById('grupo-jefe');
+
+    function actualizarVisibilidad() {
+        grupoJefe.style.display = (rolSelect.value === 'comercial') ? 'block' : 'none';
+    }
+
+    rolSelect.addEventListener('change', actualizarVisibilidad);
+});
+</script>
+{% endblock %}

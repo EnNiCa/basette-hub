@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block titulo %}Usuarios - Basette Hub{% endblock %}
+
+{% block contenido %}
+<h1>Usuarios</h1>
+<a href="{{ url_for('usuarios.nuevo_usuario') }}" class="boton-nuevo">+ Nuevo usuario</a>
+
+<div class="tabla-contenedor">
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Jefe de equipo</th>
+            <th>Activo</th>
+            <th>Fecha alta</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.rol|replace('_', ' ')|capitalize }}</td>
+            <td>{{ usuario.jefe_nombre or '-' }}</td>
+            <td>{{ 'Sí' if usuario.activo else 'No' }}</td>
+            <td>{{ usuario.fecha_alta.strftime('%d/%m/%Y') if usuario.fecha_alta else '-' }}</td>
+            <td class="celda-accion">
+                <a href="{{ url_for('usuarios.editar_usuario', usuario_id=usuario.id) }}" class="boton-tabla" title="Editar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                </a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7">No hay usuarios todavía.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

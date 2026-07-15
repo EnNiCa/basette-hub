@@ -444,6 +444,7 @@ td select {
     font-weight: 600;
     color: var(--texto);
     margin-bottom: 6px;
+    min-height: 2.2em;
 }
 
 .form-grid input,
@@ -522,4 +523,50 @@ td select {
     background: var(--gris-fondo);
     border-color: #cbd5e1;
     color: var(--azul-oscuro);
+}
+
+/* ===== Barra de herramientas ===== */
+.barra-herramientas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.form-buscador {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.form-buscador input[type="text"] {
+    padding: 8px 12px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 6px;
+    width: 320px;
+}
+
+.botones-exportar {
+    display: flex;
+    gap: 8px;
+}
+
+.boton-exportar {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    color: var(--texto);
+    border: 1px solid var(--gris-borde);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.boton-exportar:hover {
+    background: var(--gris-fondo);
+    border-color: #cbd5e1;
 }

@@ -1,10 +1,15 @@
 import os
-from flask import Blueprint, render_template, session, request, redirect, url_for, flash, current_app, abort
+import csv
+import io
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
+from flask import Blueprint, render_template, session, request, redirect, url_for, flash, current_app, abort, Response, send_file
 from extensions import get_db
 from auth.decorators import login_requerido, solo_admin
 from auth.permisos import ids_visibles
 from utils.validaciones import dni_valido, telefono_valido, cups_valido, iban_valido, cp_valido
 from werkzeug.utils import secure_filename
+from datetime import date
 
 ventas_bp = Blueprint('ventas', __name__, url_prefix='/ventas')
 
@@ -19,101 +24,27 @@ CATEGORIAS_ARCHIVO = ('dni', 'certificado_bancario', 'escritura', 'justo_titulo'
 @ventas_bp.route('/general')
 @login_requerido
 def listar_ventas_general():
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-
-    visibles = ids_visibles(session['usuario_id'], session['rol'])
     buscar = request.args.get('buscar', '').strip()
-
-    sql = """
-        SELECT v.*, c.nombre AS compania, t.nombre AS tarifa, u.nombre AS comercial,
-               ca.nombre AS canal, b.fecha_baja AS fecha_baja
-        FROM ventas v
-        JOIN companias c ON v.compania_id = c.id
-        JOIN tarifas t ON v.tarifa_id = t.id
-        JOIN usuarios u ON v.comercial_id = u.id
-        LEFT JOIN canales ca ON v.canal_id = ca.id
-        LEFT JOIN bajas b ON v.id = b.venta_id
-    """
-    parametros = []
-    condiciones = []
-
-    if visibles is not None:
-        placeholders = ','.join(['%s'] * len(visibles))
-        condiciones.append(f"v.comercial_id IN ({placeholders})")
-        parametros += visibles
-
-    if buscar:
-        condiciones.append("""(
-            CONCAT(v.nombre, ' ', v.apellidos) LIKE %s
-            OR v.dni LIKE %s
-            OR v.telefono LIKE %s
-            OR v.email LIKE %s
-            OR v.cups LIKE %s
-        )""")
-        comodin = f"%{buscar}%"
-        parametros += [comodin, comodin, comodin, comodin, comodin]
-
-    if condiciones:
-        sql += " WHERE " + " AND ".join(condiciones)
-
-    sql += " ORDER BY v.id DESC"
-
-    cursor.execute(sql, tuple(parametros))
-    ventas = cursor.fetchall()
-
+    ventas = buscar_ventas(None, buscar)
     es_admin = session['rol'] == 'admin'
 
-    return render_template('ventas/listado_general.html', ventas=ventas, es_admin=es_admin, buscar=buscar)
+    return render_template(
+        'ventas/listado_general.html',
+        ventas=ventas,
+        es_admin=es_admin,
+        modulo_actual=None,
+        buscar=buscar
+    )
 
 @ventas_bp.route('/')
 @login_requerido
 def listar_ventas():
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-
-    visibles = ids_visibles(session['usuario_id'], session['rol'])
-
     modulo_filtro = request.args.get('modulo', 'energia')
     if modulo_filtro not in MODULOS_VALIDOS:
         modulo_filtro = 'energia'
 
     buscar = request.args.get('buscar', '').strip()
-
-    sql = """
-        SELECT v.*, c.nombre AS compania, t.nombre AS tarifa, u.nombre AS comercial,
-               ca.nombre AS canal, b.fecha_baja AS fecha_baja
-        FROM ventas v
-        JOIN companias c ON v.compania_id = c.id
-        JOIN tarifas t ON v.tarifa_id = t.id
-        JOIN usuarios u ON v.comercial_id = u.id
-        LEFT JOIN canales ca ON v.canal_id = ca.id
-        LEFT JOIN bajas b ON v.id = b.venta_id
-        WHERE v.modulo = %s
-    """
-    parametros = [modulo_filtro]
-
-    if visibles is not None:
-        placeholders = ','.join(['%s'] * len(visibles))
-        sql += f" AND v.comercial_id IN ({placeholders})"
-        parametros += visibles
-
-    if buscar:
-        sql += """ AND (
-            CONCAT(v.nombre, ' ', v.apellidos) LIKE %s
-            OR v.dni LIKE %s
-            OR v.telefono LIKE %s
-            OR v.email LIKE %s
-            OR v.cups LIKE %s
-        )"""
-        comodin = f"%{buscar}%"
-        parametros += [comodin, comodin, comodin, comodin, comodin]
-
-    sql += " ORDER BY v.id DESC"
-
-    cursor.execute(sql, tuple(parametros))
-    ventas = cursor.fetchall()
-
+    ventas = buscar_ventas(modulo_filtro, buscar)
     es_admin = session['rol'] == 'admin'
 
     return render_template(
@@ -404,3 +335,164 @@ def editar_venta(venta_id):
     canales = cursor.fetchall()
 
     return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales, origen=origen)
+
+def buscar_ventas(modulo_filtro=None, buscar=''):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    visibles = ids_visibles(session['usuario_id'], session['rol'])
+    
+    sql = """
+        SELECT v.*, c.nombre AS compania, t.nombre AS tarifa, u.nombre AS comercial,
+               ca.nombre AS canal, b.fecha_baja AS fecha_baja
+        FROM ventas v
+        JOIN companias c ON v.compania_id = c.id
+        JOIN tarifas t ON v.tarifa_id = t.id
+        JOIN usuarios u ON v.comercial_id = u.id
+        LEFT JOIN canales ca ON v.canal_id = ca.id
+        LEFT JOIN bajas b ON v.id = b.venta_id
+    """
+    
+    condiciones = []
+    parametros = []
+    
+    if modulo_filtro:
+        condiciones.append("v.modulo = %s")
+        parametros.append(modulo_filtro)
+        
+    if visibles is not None:
+        placeholders = ','.join(['%s'] * len(visibles))
+        condiciones.append(f"v.comercial_id IN ({placeholders})")
+        parametros += visibles
+        
+    if buscar:
+        condiciones.append("""(
+            CONCAT(v.nombre, ' ', v.apellidos) LIKE %s
+            OR v.dni LIKE %s
+            OR v.telefono LIKE %s
+            OR v.email LIKE %s
+            OR v.cups LIKE %s
+        )""")
+        comodin = f"%{buscar}%"
+        parametros += [comodin, comodin, comodin, comodin, comodin]
+        
+    if condiciones:
+        sql += " WHERE " + " AND ".join(condiciones)
+        
+    sql += " ORDER BY v.id DESC"
+    
+    cursor.execute(sql, tuple(parametros))
+    return cursor.fetchall()
+
+def columnas_export(es_admin):
+    columnas = [
+        ('nombre', 'Nombre', 'texto'),
+        ('apellidos', 'Apellidos', 'texto'),
+        ('dni', 'DNI', 'texto'),
+        ('direccion', 'Dirección', 'texto'),
+        ('cp', 'C.P.', 'texto'),
+        ('telefono', 'Teléfono', 'texto'),
+        ('email', 'Email', 'texto'),
+        ('numero_cuenta', 'Nº Cuenta', 'texto'),
+        ('comercial', 'Comercial', 'texto'),
+        ('canal', 'Canal', 'texto'),
+        ('modulo', 'Módulo', 'texto'),
+        ('tipo_energia', 'Tipo energía', 'texto'),
+        ('compania', 'Compañía', 'texto'),
+        ('tarifa', 'Tarifa', 'texto'),
+        ('cups', 'CUPS', 'texto'),
+        ('mantenimiento', 'Mantenimiento', 'bool'),
+        ('bateria', 'Batería', 'bool'),
+        ('estado', 'Estado', 'texto'),
+        ('fecha_firma', 'Fecha firma', 'fecha'),
+        ('fecha_activacion', 'Fecha activación', 'fecha'),
+        ('fecha_baja', 'Fecha baja', 'fecha'),
+    ]
+    if es_admin:
+        columnas += [
+            ('fecha_liquidacion', 'Fecha liquidación', 'fecha'),
+            ('importe_liquidar', 'Importe compañía', 'texto'),
+            ('fecha_descomision', 'Fecha descomisión', 'fecha'),
+            ('importe_descomisionado', 'Importe descomisión', 'texto'),
+        ]
+    columnas += [
+        ('fecha_pago_comercial', 'Fecha pago comercial', 'fecha'),
+        ('importe_pago_comercial', 'Importe pago comercial', 'texto'),
+        ('fecha_descomision_comercial', 'Fecha descomisión comercial', 'fecha'),
+        ('importe_descomisionado_comercial', 'Importe descomisión comercial', 'texto'),
+        ('observaciones', 'Observaciones', 'texto'),
+    ]
+    return columnas
+
+def formatear_valor(valor, tipo):
+    if valor is None:
+        return ''
+    if tipo == 'bool':
+        return 'Sí' if valor else 'No'
+    if tipo == 'fecha' and isinstance(valor, date):
+        return valor.strftime('%d/%m/%Y')
+    return valor
+
+@ventas_bp.route('/exportar/csv')
+@login_requerido
+def exportar_csv():
+    modulo_filtro = request.args.get('modulo') or None
+    if modulo_filtro and modulo_filtro not in MODULOS_VALIDOS:
+        modulo_filtro = None
+    buscar = request.args.get('buscar', '').strip()
+
+    ventas = buscar_ventas(modulo_filtro, buscar)
+    es_admin = session['rol'] == 'admin'
+    columnas = columnas_export(es_admin)
+
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=';')
+    writer.writerow([etiqueta for clave, etiqueta, tipo in columnas])
+    for venta in ventas:
+        writer.writerow([formatear_valor(venta.get(clave), tipo) for clave, etiqueta, tipo in columnas])
+
+    respuesta = Response('\ufeff' + output.getvalue(), mimetype='text/csv; charset=utf-8')
+    nombre_archivo = f"ventas_{modulo_filtro or 'general'}.csv"
+    respuesta.headers['Content-Disposition'] = f'attachment; filename={nombre_archivo}'
+    return respuesta
+
+
+@ventas_bp.route('/exportar/excel')
+@login_requerido
+def exportar_excel():
+    modulo_filtro = request.args.get('modulo') or None
+    if modulo_filtro and modulo_filtro not in MODULOS_VALIDOS:
+        modulo_filtro = None
+    buscar = request.args.get('buscar', '').strip()
+
+    ventas = buscar_ventas(modulo_filtro, buscar)
+    es_admin = session['rol'] == 'admin'
+    columnas = columnas_export(es_admin)
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Ventas"
+
+    ws.append([etiqueta for clave, etiqueta, tipo in columnas])
+    for celda in ws[1]:
+        celda.font = Font(bold=True, color="FFFFFF")
+        celda.fill = PatternFill(start_color="1E293B", end_color="1E293B", fill_type="solid")
+
+    for venta in ventas:
+        ws.append([formatear_valor(venta.get(clave), tipo) for clave, etiqueta, tipo in columnas])
+
+    for columna in ws.columns:
+        valores = [len(str(celda.value)) for celda in columna if celda.value]
+        ancho = max(valores) + 2 if valores else 12
+        ws.column_dimensions[columna[0].column_letter].width = min(ancho, 40)
+
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    nombre_archivo = f"ventas_{modulo_filtro or 'general'}.xlsx"
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=nombre_archivo,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
