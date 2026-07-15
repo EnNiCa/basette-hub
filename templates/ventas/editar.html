@@ -3,11 +3,12 @@
 {% block titulo %}Editar venta - Basette Hub{% endblock %}
 
 {% block contenido %}
-<a href="{{ url_for('ventas.listar_ventas', modulo=venta.modulo) }}" class="boton-volver">← Volver al listado</a>
+<a href="{{ origen }}" class="boton-volver">← Volver al listado</a>
 <h1>Editar venta: {{ venta.nombre }} {{ venta.apellidos }}</h1>
 
 <div class="formulario-card">
 <form method="POST" action="{{ url_for('ventas.editar_venta', venta_id=venta.id) }}">
+    <input type="hidden" name="origen" value="{{ origen }}">
 
     <div class="form-grid">
         <div class="form-seccion-titulo"><h3>Datos de la venta</h3></div>

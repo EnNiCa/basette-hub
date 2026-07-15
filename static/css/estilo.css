@@ -51,6 +51,9 @@ nav {
     display: flex;
     align-items: center;
     height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .nav-brand {
@@ -181,6 +184,31 @@ nav > ul > li:hover .dropdown {
     background: #1d4ed8;
 }
 
+/* ===== Botones Tabla de ventas ===== */
+.boton-tabla {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: white;
+    color: var(--azul-acento);
+    border: 1px solid var(--azul-acento);
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.boton-tabla svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+}
+
+.boton-tabla:hover {
+    background: var(--azul-acento);
+    color: white;
+}
 /* ===== Tabla de ventas ===== */
 .tabla-contenedor {
     overflow-x: auto;

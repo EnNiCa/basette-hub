@@ -322,6 +322,8 @@ def editar_venta(venta_id):
     visibles = ids_visibles(session['usuario_id'], session['rol'])
     if visibles is not None and venta['comercial_id'] not in visibles:
         abort(403)
+        
+    origen = request.args.get('origen') or request.form.get('origen') or url_for('ventas.listar_ventas', modulo=venta['modulo'])
 
     if request.method == 'POST':
         dni = request.form.get('dni', '').strip().upper()
@@ -358,7 +360,7 @@ def editar_venta(venta_id):
             venta.update(request.form.to_dict())
             venta['id'] = venta_id
             venta['dni'] = dni
-            return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales)
+            return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales, origen=origen)
 
         cursor.execute(
             """
@@ -388,7 +390,7 @@ def editar_venta(venta_id):
         )
         db.commit()
         flash('Venta actualizada correctamente.', 'exito')
-        return redirect(url_for('ventas.listar_ventas', modulo=venta['modulo']))
+        return redirect(origen)
 
     cursor.execute(
         "SELECT id, nombre FROM companias WHERE tipo_servicio = %s", (venta['modulo'],)
@@ -401,4 +403,4 @@ def editar_venta(venta_id):
     cursor.execute("SELECT id, nombre FROM canales")
     canales = cursor.fetchall()
 
-    return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales)
+    return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales, origen=origen)
