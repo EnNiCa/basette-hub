@@ -188,20 +188,18 @@ nav > ul > li:hover .dropdown {
 .boton-tabla {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     background: white;
     color: var(--azul-acento);
     border: 1px solid var(--azul-acento);
-    padding: 5px 12px;
-    border-radius: 5px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    white-space: nowrap;
+    border-radius: 6px;
 }
 
 .boton-tabla svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     stroke: currentColor;
 }
 
@@ -209,6 +207,7 @@ nav > ul > li:hover .dropdown {
     background: var(--azul-acento);
     color: white;
 }
+
 /* ===== Tabla de ventas ===== */
 .tabla-contenedor {
     overflow-x: auto;
@@ -406,6 +405,12 @@ td select {
 }
 
 /* ===== Formulario de nueva venta ===== */
+.formulario-titulo {
+    max-width: 700px;
+    margin: 0 auto 8px;
+    text-align: center;
+}
+
 .formulario-card {
     background: white;
     border: 1px solid var(--gris-borde);
@@ -473,6 +478,10 @@ td select {
 }
 .formulario-card button[type="submit"]:hover {
     background: #1d4ed8;
+}
+
+.celda-accion {
+    text-align: center;
 }
 
 /* ===== Botón "volver" ===== */

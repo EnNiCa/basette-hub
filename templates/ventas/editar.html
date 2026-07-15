@@ -4,7 +4,9 @@
 
 {% block contenido %}
 <a href="{{ origen }}" class="boton-volver">← Volver al listado</a>
-<h1>Editar venta: {{ venta.nombre }} {{ venta.apellidos }}</h1>
+<div class="formulario-titulo">
+    <h1>Editar venta: {{ venta.nombre }} {{ venta.apellidos }}</h1>
+</div>
 
 <div class="formulario-card">
 <form method="POST" action="{{ url_for('ventas.editar_venta', venta_id=venta.id) }}">
