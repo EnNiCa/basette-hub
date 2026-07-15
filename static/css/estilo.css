@@ -94,6 +94,21 @@ nav > ul > li > a:hover {
     margin-left: auto;
 }
 
+.perfil-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.perfil-nombre {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+}
+
+.nav-perfil:hover .perfil-nombre {
+    color: white;
+}
+
 .perfil-icono {
     display: flex;
     align-items: center;

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block titulo %}Ventas - Telefonía{% endblock %}
+
+{% block contenido %}
+<h1>Ventas - Telefonía</h1>
+<a href="{{ url_for('ventas.nueva_venta') }}" class="boton-nuevo">+ Nueva venta</a>
+
+{% include "ventas/_buscador.html" %}
+
+<div class="tabla-contenedor">
+    <table>
+        <thead>
+            <tr>
+                {% include "ventas/_cabeceras_comunes.html" %}
+                {% include "ventas/_cabeceras_comunes_final.html" %}
+            </tr>
+        </thead>
+        <body>
+            {% for venta in ventas %}
+            <tr>
+                {% include "ventas/_celdas_comunes.html" %}
+                {% include "ventas/_celdas_comunes_final.html" %}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="27">No hay ventas de telefonía todavía</td>
+            </tr>
+            {% endfor %}
+        </body>
+    </table>
+</div>
+{% endblock %}
