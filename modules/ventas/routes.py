@@ -255,10 +255,13 @@ def ver_archivos(venta_id):
     for archivo in archivos_todos:
         archivos_por_categoria[archivo['categoria']].append(archivo)
 
+    origen = request.args.get('origen') or url_for('ventas.listar_ventas', modulo=venta['modulo'])
+
     return render_template(
         'ventas/archivos_adjuntos.html',
         venta=venta,
-        archivos_por_categoria=archivos_por_categoria
+        archivos_por_categoria=archivos_por_categoria,
+        origen=origen
     )
 
 

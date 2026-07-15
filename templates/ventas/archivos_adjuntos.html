@@ -4,7 +4,7 @@
 
 {% block contenido %}
 <h1>Archivos adjuntos: {{ venta.nombre }} {{ venta.apellidos }}</h1>
-<p><a href="{{ url_for('ventas.listar_ventas', modulo=venta.modulo) }}">Volver al listado</a></p>
+<p><a href="{{ origen }}">Volver al listado</a></p>
 
 {% set categorias_info = [
     ('dni', 'DNI'),
