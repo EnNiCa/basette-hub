@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block titulo %}Editar venta - Basette Hub{% endblock %}
+
+{% block contenido %}
+<a href="{{ url_for('ventas.listar_ventas', modulo=venta.modulo) }}" class="boton-volver">← Volver al listado</a>
+<h1>Editar venta: {{ venta.nombre }} {{ venta.apellidos }}</h1>
+
+<div class="formulario-card">
+<form method="POST" action="{{ url_for('ventas.editar_venta', venta_id=venta.id) }}">
+
+    <div class="form-grid">
+        <div class="form-seccion-titulo"><h3>Datos de la venta</h3></div>
+
+        <div class="form-grupo">
+            <label>Módulo</label>
+            <input type="text" value="{{ venta.modulo|replace('_', ' ')|capitalize }}" disabled>
+        </div>
+
+        {% if venta.modulo == 'energia' %}
+        <div class="form-grupo">
+            <label for="tipo_energia">Tipo de energía</label>
+            <select id="tipo_energia" name="tipo_energia">
+                <option value="">-- Selecciona --</option>
+                <option value="luz" {% if venta.tipo_energia == 'luz' %}selected{% endif %}>Luz</option>
+                <option value="gas" {% if venta.tipo_energia == 'gas' %}selected{% endif %}>Gas</option>
+            </select>
+        </div>
+        {% endif %}
+
+        <div class="form-grupo">
+            <label for="compania_id">Compañía</label>
+            <select id="compania_id" name="compania_id" required>
+                {% for compania in companias %}
+                <option value="{{ compania.id }}" {% if compania.id == venta.compania_id %}selected{% endif %}>{{ compania.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-grupo">
+            <label for="tarifa_id">Tarifa</label>
+            <select id="tarifa_id" name="tarifa_id" required>
+                {% for tarifa in tarifas %}
+                <option value="{{ tarifa.id }}" {% if tarifa.id == venta.tarifa_id %}selected{% endif %}>{{ tarifa.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-grupo">
+            <label for="canal_id">Canal (opcional)</label>
+            <select id="canal_id" name="canal_id">
+                <option value="">-- Sin especificar --</option>
+                {% for canal in canales %}
+                <option value="{{ canal.id }}" {% if canal.id == venta.canal_id %}selected{% endif %}>{{ canal.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-seccion-titulo"><h3>Datos del cliente</h3></div>
+
+        <div class="form-grupo">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" value="{{ venta.nombre }}" required>
+        </div>
+
+        <div class="form-grupo">
+            <label for="apellidos">Apellidos</label>
+            <input type="text" id="apellidos" name="apellidos" value="{{ venta.apellidos }}" required>
+        </div>
+
+        <div class="form-grupo">
+            <label for="dni">DNI</label>
+            <input type="text" id="dni" name="dni" value="{{ venta.dni }}" required
+                   pattern="[0-9]{8}[A-Za-z]" maxlength="9"
+                   title="8 números seguidos de una letra, ej: 12345678A">
+        </div>
+
+        <div class="form-grupo">
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" name="direccion" value="{{ venta.direccion or '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="cp">Código postal</label>
+            <input type="text" id="cp" name="cp" value="{{ venta.cp or '' }}"
+                   pattern="[0-9]{5}" maxlength="5"
+                   title="5 dígitos, ej: 41001">
+        </div>
+
+        <div class="form-grupo">
+            <label for="cups">CUPS</label>
+            <input type="text" id="cups" name="cups" value="{{ venta.cups or '' }}"
+                   pattern="ES[0-9]{16}[A-Za-z]{2}[0-9A-Za-z]{0,4}" maxlength="22"
+                   title="Formato CUPS, ej: ES0021000005311232MT">
+        </div>
+
+        <div class="form-grupo">
+            <label for="telefono">Teléfono</label>
+            <input type="tel" id="telefono" name="telefono" value="{{ venta.telefono or '' }}"
+                   pattern="[0-9]{9}" maxlength="9"
+                   title="9 dígitos, sin espacios ni prefijo">
+        </div>
+
+        <div class="form-grupo">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ venta.email or '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="numero_cuenta">Número de cuenta (IBAN)</label>
+            <input type="text" id="numero_cuenta" name="numero_cuenta" value="{{ venta.numero_cuenta or '' }}"
+                   pattern="ES[0-9]{2}\s?[0-9]{4}\s?[0-9]{4}\s?[0-9]{2}\s?[0-9]{10}" maxlength="29"
+                   title="IBAN español, ej: ES61 1234 3456 42 0456323532">
+        </div>
+
+        <div class="form-grupo" style="grid-column: 1 / -1;">
+            <label for="observaciones">Observaciones</label>
+            <textarea id="observaciones" name="observaciones" rows="4">{{ venta.observaciones or '' }}</textarea>
+        </div>
+    </div>
+
+    <button type="submit">Guardar cambios</button>
+</form>
+</div>
+{% endblock %}

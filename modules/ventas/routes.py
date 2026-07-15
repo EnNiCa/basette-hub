@@ -307,3 +307,98 @@ def subir_archivo(venta_id):
     db.commit()
     flash('Archivo(s) subido(s) correctamente.', 'exito')
     return redirect(url_for('ventas.ver_archivos', venta_id=venta_id))
+
+@ventas_bp.route('/<int:venta_id>/editar', methods=['GET', 'POST'])
+@login_requerido
+def editar_venta(venta_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM ventas WHERE id = %s", (venta_id,))
+    venta = cursor.fetchone()
+    if venta is None:
+        abort(404)
+
+    visibles = ids_visibles(session['usuario_id'], session['rol'])
+    if visibles is not None and venta['comercial_id'] not in visibles:
+        abort(403)
+
+    if request.method == 'POST':
+        dni = request.form.get('dni', '').strip().upper()
+        telefono = request.form.get('telefono', '').strip()
+        cups = request.form.get('cups', '').strip().upper()
+        numero_cuenta = request.form.get('numero_cuenta', '').strip().upper()
+        cp = request.form.get('cp', '').strip()
+
+        errores = []
+        if not dni_valido(dni):
+            errores.append('El DNI debe tener 8 dígitos seguidos de una letra (ej: 12345678A).')
+        if telefono and not telefono_valido(telefono):
+            errores.append('El teléfono debe tener exactamente 9 dígitos.')
+        if not cups_valido(cups):
+            errores.append('El CUPS no tiene un formato válido (ej: ES0021000005311232MT).')
+        if not iban_valido(numero_cuenta):
+            errores.append('El número de cuenta no tiene un formato IBAN válido.')
+        if not cp_valido(cp):
+            errores.append('El código postal debe tener 5 dígitos.')
+
+        if errores:
+            for error in errores:
+                flash(error, 'error')
+            cursor.execute(
+                "SELECT id, nombre FROM companias WHERE tipo_servicio = %s", (venta['modulo'],)
+            )
+            companias = cursor.fetchall()
+            cursor.execute(
+                "SELECT id, nombre FROM tarifas WHERE tipo_servicio = %s AND vigente = TRUE", (venta['modulo'],)
+            )
+            tarifas = cursor.fetchall()
+            cursor.execute("SELECT id, nombre FROM canales")
+            canales = cursor.fetchall()
+            venta.update(request.form.to_dict())
+            venta['id'] = venta_id
+            venta['dni'] = dni
+            return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales)
+
+        cursor.execute(
+            """
+            UPDATE ventas SET
+                tipo_energia = %s, compania_id = %s, tarifa_id = %s, canal_id = %s,
+                nombre = %s, apellidos = %s, direccion = %s, cp = %s, dni = %s, cups = %s,
+                telefono = %s, email = %s, numero_cuenta = %s, observaciones = %s
+            WHERE id = %s
+            """,
+            (
+                request.form.get('tipo_energia') or None,
+                request.form.get('compania_id'),
+                request.form.get('tarifa_id'),
+                request.form.get('canal_id') or None,
+                request.form.get('nombre'),
+                request.form.get('apellidos'),
+                request.form.get('direccion'),
+                cp or None,
+                dni,
+                cups or None,
+                telefono or None,
+                request.form.get('email'),
+                numero_cuenta or None,
+                request.form.get('observaciones'),
+                venta_id,
+            )
+        )
+        db.commit()
+        flash('Venta actualizada correctamente.', 'exito')
+        return redirect(url_for('ventas.listar_ventas', modulo=venta['modulo']))
+
+    cursor.execute(
+        "SELECT id, nombre FROM companias WHERE tipo_servicio = %s", (venta['modulo'],)
+    )
+    companias = cursor.fetchall()
+    cursor.execute(
+        "SELECT id, nombre FROM tarifas WHERE tipo_servicio = %s AND vigente = TRUE", (venta['modulo'],)
+    )
+    tarifas = cursor.fetchall()
+    cursor.execute("SELECT id, nombre FROM canales")
+    canales = cursor.fetchall()
+
+    return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales)

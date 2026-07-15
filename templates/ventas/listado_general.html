@@ -36,7 +36,7 @@
         </tr>
         {% else %}
         <tr>
-            <td colspan="28">No hay ventas todavía.</td>
+            <td colspan="{{ 31 if es_admin else 27 }}">No hay ventas todavía.</td>
         </tr>
         {% endfor %}
     </tbody>

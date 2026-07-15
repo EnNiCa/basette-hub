@@ -27,3 +27,4 @@
 <td>{{ venta.importe_descomisionado_comercial if venta.importe_descomisionado_comercial is not none else '-' }}</td>
 <td>{{ venta.observaciones or '-' }}</td>
 <td><a href="{{ url_for('ventas.ver_archivos', venta_id=venta.id, origen=request.full_path) }}">Ver archivos</a></td>
+<td><a href="{{ url_for('ventas.editar_venta', venta_id=venta.id) }}">Editar</a></td>

@@ -16,7 +16,7 @@
                 {% include "ventas/_cabeceras_comunes_final.html" %}
             </tr>
         </thead>
-        <body>
+        <tbody>
             {% for venta in ventas %}
             <tr>
                 {% include "ventas/_celdas_comunes.html" %}
@@ -24,10 +24,10 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="27">No hay ventas de telefonía todavía</td>
+                <td colspan="{{ 28 if es_admin else 24 }}">No hay ventas de telefonía todavía</td>
             </tr>
             {% endfor %}
-        </body>
+        </tbody>
     </table>
 </div>
 {% endblock %}
