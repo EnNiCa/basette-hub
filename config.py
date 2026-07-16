@@ -1,11 +1,13 @@
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv() # busca el archivo .env y carga sus variables
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'uploads')
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=10)
     
     DB_CONFIG ={
         'host': os.environ.get('DB_HOST'),
