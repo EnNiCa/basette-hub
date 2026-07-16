@@ -100,7 +100,7 @@ def nueva_venta():
         if tipo_cliente == 'empresa' and not cif_valido(cif):
             errores.append('El CIF debe tener un formato válido (ej: B12345678).')
         if tipo_cliente == 'empresa' and not razon_social:
-            errores.append('Debes indicar el nombre del representante legal.')
+            errores.append('Debes indicar la razón social de la empresa.')
         if tipo_cliente == 'empresa' and not dni_valido(dni):
             errores.append('El DNI del representante debe tener un formato válido.')
         if telefono and not telefono_valido(telefono):
@@ -121,7 +121,13 @@ def nueva_venta():
             tarifas = cursor.fetchall()
             cursor.execute("SELECT id, nombre FROM canales")
             canales = cursor.fetchall()
-            return render_template('ventas/nueva.html', companias=companias, tarifas=tarifas, canales=canales)
+            return render_template(
+                'ventas/nueva.html',
+                companias=companias,
+                tarifas=tarifas,
+                canales=canales,
+                valores=request.form
+            )
 
         cursor.execute(
             """
@@ -265,7 +271,7 @@ def editar_venta(venta_id):
     visibles = ids_visibles(session['usuario_id'], session['rol'])
     if visibles is not None and venta['comercial_id'] not in visibles:
         abort(403)
-        
+
     origen = request.args.get('origen') or request.form.get('origen') or url_for('ventas.listar_ventas', modulo=venta['modulo'])
 
     if request.method == 'POST':
@@ -277,7 +283,6 @@ def editar_venta(venta_id):
         cups = request.form.get('cups', '').strip().upper()
         numero_cuenta = request.form.get('numero_cuenta', '').strip().upper()
         cp = request.form.get('cp', '').strip()
-        modulo = request.form.get('modulo')
 
         errores = []
         if tipo_cliente == 'particular' and not dni_valido(dni):
@@ -285,7 +290,7 @@ def editar_venta(venta_id):
         if tipo_cliente == 'empresa' and not cif_valido(cif):
             errores.append('El CIF debe tener un formato válido (ej: B12345678).')
         if tipo_cliente == 'empresa' and not razon_social:
-            errores.append('Debes indicar el nombre del representante legal.')
+            errores.append('Debes indicar la razón social de la empresa.')
         if tipo_cliente == 'empresa' and not dni_valido(dni):
             errores.append('El DNI del representante debe tener un formato válido.')
         if telefono and not telefono_valido(telefono):
@@ -312,14 +317,14 @@ def editar_venta(venta_id):
             canales = cursor.fetchall()
             venta.update(request.form.to_dict())
             venta['id'] = venta_id
-            venta['dni'] = dni
             return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales, origen=origen)
 
         cursor.execute(
             """
             UPDATE ventas SET
                 tipo_energia = %s, compania_id = %s, tarifa_id = %s, canal_id = %s,
-                nombre = %s, apellidos = %s, direccion = %s, cp = %s, dni = %s, cups = %s,
+                nombre = %s, apellidos = %s, tipo_cliente = %s, direccion = %s, cp = %s,
+                dni = %s, cif = %s, razon_social = %s, cups = %s,
                 telefono = %s, email = %s, numero_cuenta = %s, observaciones = %s
             WHERE id = %s
             """,
@@ -330,9 +335,12 @@ def editar_venta(venta_id):
                 request.form.get('canal_id') or None,
                 request.form.get('nombre'),
                 request.form.get('apellidos'),
+                tipo_cliente,
                 request.form.get('direccion'),
                 cp or None,
                 dni,
+                cif or None,
+                razon_social or None,
                 cups or None,
                 telefono or None,
                 request.form.get('email'),

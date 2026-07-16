@@ -16,10 +16,10 @@
             <label for="modulo">Módulo</label>
             <select id="modulo" name="modulo" required>
                 <option value="">-- Selecciona --</option>
-                <option value="energia">Energía</option>
-                <option value="alarmas">Alarmas</option>
-                <option value="telefonia">Telefonía</option>
-                <option value="placas_solares">Placas solares</option>
+                <option value="energia" {% if valores and valores.modulo == 'energia' %}selected{% endif %}>Energía</option>
+                <option value="alarmas" {% if valores and valores.modulo == 'alarmas' %}selected{% endif %}>Alarmas</option>
+                <option value="telefonia" {% if valores and valores.modulo == 'telefonia' %}selected{% endif %}>Telefonía</option>
+                <option value="placas_solares" {% if valores and valores.modulo == 'placas_solares' %}selected{% endif %}>Placas solares</option>
             </select>
         </div>
 
@@ -27,8 +27,8 @@
             <label for="tipo_energia">Tipo de energía</label>
             <select id="tipo_energia" name="tipo_energia">
                 <option value="">-- Selecciona --</option>
-                <option value="luz">Luz</option>
-                <option value="gas">Gas</option>
+                <option value="luz" {% if valores and valores.tipo_energia == 'luz' %}selected{% endif %}>Luz</option>
+                <option value="gas" {% if valores and valores.tipo_energia == 'gas' %}selected{% endif %}>Gas</option>
             </select>
         </div>
 
@@ -37,7 +37,10 @@
             <select id="compania_id" name="compania_id" required>
                 <option value="">-- Selecciona un módulo primero --</option>
                 {% for compania in companias %}
-                <option value="{{ compania.id }}" data-tipo="{{ compania.tipo_servicio }}" hidden>{{ compania.nombre }}</option>
+                <option value="{{ compania.id }}" data-tipo="{{ compania.tipo_servicio }}"
+                        {% if valores and valores.compania_id == compania.id|string %}selected{% endif %} hidden>
+                    {{ compania.nombre }}
+                </option>
                 {% endfor %}
             </select>
         </div>
@@ -47,7 +50,10 @@
             <select id="tarifa_id" name="tarifa_id" required>
                 <option value="">-- Selecciona un módulo primero --</option>
                 {% for tarifa in tarifas %}
-                <option value="{{ tarifa.id }}" data-tipo="{{ tarifa.tipo_servicio }}" hidden>{{ tarifa.nombre }}</option>
+                <option value="{{ tarifa.id }}" data-tipo="{{ tarifa.tipo_servicio }}"
+                        {% if valores and valores.tarifa_id == tarifa.id|string %}selected{% endif %} hidden>
+                    {{ tarifa.nombre }}
+                </option>
                 {% endfor %}
             </select>
         </div>
@@ -57,7 +63,9 @@
             <select id="canal_id" name="canal_id">
                 <option value="">-- Sin especificar --</option>
                 {% for canal in canales %}
-                <option value="{{ canal.id }}">{{ canal.nombre }}</option>
+                <option value="{{ canal.id }}" {% if valores and valores.canal_id == canal.id|string %}selected{% endif %}>
+                    {{ canal.nombre }}
+                </option>
                 {% endfor %}
             </select>
         </div>
@@ -65,8 +73,8 @@
         <div class="form-grupo">
             <label for="tipo_cliente">Tipo de cliente</label>
             <select id="tipo_cliente" name="tipo_cliente" required>
-                <option value="particular">Particular</option>
-                <option value="empresa">Empresa</option>
+                <option value="particular" {% if not valores or valores.tipo_cliente == 'particular' %}selected{% endif %}>Particular</option>
+                <option value="empresa" {% if valores and valores.tipo_cliente == 'empresa' %}selected{% endif %}>Empresa</option>
             </select>
         </div>
 
@@ -74,72 +82,70 @@
 
         <div class="form-grupo">
             <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" required>
+            <input type="text" id="nombre" name="nombre" value="{{ valores.nombre if valores else '' }}" required>
         </div>
 
         <div class="form-grupo">
             <label for="apellidos">Apellidos</label>
-            <input type="text" id="apellidos" name="apellidos" required>
+            <input type="text" id="apellidos" name="apellidos" value="{{ valores.apellidos if valores else '' }}" required>
         </div>
 
         <div class="form-grupo" id="grupo-dni">
-            <label for="dni">DNI / NIE</label>
-            <input type="text" id="dni" name="dni"
-                title="DNI (12345678A) o NIE (X1234567A)">
+            <label for="dni" id="label-dni">DNI / NIE</label>
+            <input type="text" id="dni" name="dni" value="{{ valores.dni if valores else '' }}">
         </div>
 
         <div class="form-grupo" id="grupo-cif" style="display: none;">
             <label for="cif">CIF de la empresa</label>
-            <input type="text" id="cif" name="cif"
-                title="Ej: B12345678">
+            <input type="text" id="cif" name="cif" value="{{ valores.cif if valores else '' }}">
         </div>
 
         <div class="form-grupo" id="grupo-representante" style="display: none;">
-            <label for="nombre_representante">Razón social</label>
-            <input type="text" id="razon-social" name="razon-social">
+            <label for="razon_social">Razón social de la empresa</label>
+            <input type="text" id="razon_social" name="razon_social" value="{{ valores.razon_social if valores else '' }}">
         </div>
 
         <div class="form-grupo">
             <label for="direccion">Dirección</label>
-            <input type="text" id="direccion" name="direccion">
+            <input type="text" id="direccion" name="direccion" value="{{ valores.direccion if valores else '' }}">
         </div>
 
         <div class="form-grupo">
             <label for="cp">Código postal</label>
-            <input type="text" id="cp" name="cp"
+            <input type="text" id="cp" name="cp" value="{{ valores.cp if valores else '' }}"
                    pattern="[0-9]{5}" maxlength="5"
                    title="5 dígitos, ej: 41001">
         </div>
 
         <div class="form-grupo">
             <label for="cups">CUPS</label>
-            <input type="text" id="cups" name="cups"
+            <input type="text" id="cups" name="cups" value="{{ valores.cups if valores else '' }}"
                    pattern="ES[0-9]{16}[A-Za-z]{2}[0-9A-Za-z]{0,4}" maxlength="22"
                    title="Formato CUPS, ej: ES0021000005311232MT">
         </div>
 
         <div class="form-grupo">
             <label for="telefono">Teléfono</label>
-            <input type="tel" id="telefono" name="telefono"
+            <input type="tel" id="telefono" name="telefono" value="{{ valores.telefono if valores else '' }}"
                    pattern="[0-9]{9}" maxlength="9"
                    title="9 dígitos, sin espacios ni prefijo">
         </div>
 
         <div class="form-grupo">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email">
+            <input type="email" id="email" name="email" value="{{ valores.email if valores else '' }}">
         </div>
 
         <div class="form-grupo">
             <label for="numero_cuenta">Número de cuenta (IBAN)</label>
-            <input type="text" id="numero_cuenta" name="numero_cuenta"
+            <input type="text" id="numero_cuenta" name="numero_cuenta" value="{{ valores.numero_cuenta if valores else '' }}"
                    pattern="ES[0-9]{2}\s?[0-9]{4}\s?[0-9]{4}\s?[0-9]{2}\s?[0-9]{10}" maxlength="29"
                    title="IBAN español, ej: ES61 1234 3456 42 0456323532">
         </div>
 
         <div class="form-grupo" style="grid-column: 1 / -1;">
             <label for="observaciones">Observaciones</label>
-            <textarea id="observaciones" name="observaciones" rows="4"></textarea>
+            <textarea id="observaciones" name="observaciones" rows="4">{{ valores.observaciones if valores else '' }}</textarea>
         </div>
     </div>
 
@@ -172,7 +178,6 @@ document.addEventListener('DOMContentLoaded', function () {
             opciones.forEach(function (opcion) {
                 opcion.hidden = (opcion.dataset.tipo !== moduloActual);
             });
-            select.value = '';
         });
     }
 
@@ -181,15 +186,18 @@ document.addEventListener('DOMContentLoaded', function () {
         grupoCif.style.display = esEmpresa ? 'block' : 'none';
         grupoRepresentante.style.display = esEmpresa ? 'block' : 'none';
         labelDni.textContent = esEmpresa ? 'DNI / NIE del representante' : 'DNI / NIE';
-
-        if (!esEmpresa) {
-            document.getElementById('cif').value = '';
-            document.getElementById('razon_social').value = '';
-        }
     }
 
-    moduloSelect.addEventListener('change', actualizarFormulario);
+    moduloSelect.addEventListener('change', function () {
+        actualizarFormulario();
+        companiaSelect.value = '';
+        tarifaSelect.value = '';
+    });
+
     tipoClienteSelect.addEventListener('change', actualizarTipoCliente);
+
+    actualizarFormulario();
+    actualizarTipoCliente();
 });
 </script>
 {% endblock %}

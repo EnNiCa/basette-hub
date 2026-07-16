@@ -59,6 +59,14 @@
             </select>
         </div>
 
+        <div class="form-grupo">
+            <label for="tipo_cliente">Tipo de cliente</label>
+            <select id="tipo_cliente" name="tipo_cliente" required>
+                <option value="particular" {% if venta.tipo_cliente == 'particular' %}selected{% endif %}>Particular</option>
+                <option value="empresa" {% if venta.tipo_cliente == 'empresa' %}selected{% endif %}>Empresa</option>
+            </select>
+        </div>
+
         <div class="form-seccion-titulo"><h3>Datos del cliente</h3></div>
 
         <div class="form-grupo">
@@ -71,11 +79,19 @@
             <input type="text" id="apellidos" name="apellidos" value="{{ venta.apellidos }}" required>
         </div>
 
-        <div class="form-grupo">
-            <label for="dni">DNI</label>
-            <input type="text" id="dni" name="dni" value="{{ venta.dni }}" required
-                   pattern="[0-9]{8}[A-Za-z]" maxlength="9"
-                   title="8 números seguidos de una letra, ej: 12345678A">
+        <div class="form-grupo" id="grupo-dni">
+            <label for="dni" id="label-dni">DNI / NIE</label>
+            <input type="text" id="dni" name="dni" value="{{ venta.dni or '' }}">
+        </div>
+
+        <div class="form-grupo" id="grupo-cif">
+            <label for="cif">CIF de la empresa</label>
+            <input type="text" id="cif" name="cif" value="{{ venta.cif or '' }}">
+        </div>
+
+        <div class="form-grupo" id="grupo-representante">
+            <label for="razon_social">Razón social de la empresa</label>
+            <input type="text" id="razon_social" name="razon_social" value="{{ venta.razon_social or '' }}">
         </div>
 
         <div class="form-grupo">
@@ -125,4 +141,25 @@
     <button type="submit">Guardar cambios</button>
 </form>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const rolSelect = document.getElementById('rol');
+    // (si esto es de usuarios, ignóralo aquí — en editar.html de VENTAS sería distinto, revisa abajo)
+
+    const tipoClienteSelect = document.getElementById('tipo_cliente');
+    const grupoCif = document.getElementById('grupo-cif');
+    const grupoRepresentante = document.getElementById('grupo-representante');
+    const labelDni = document.getElementById('label-dni');
+
+    function actualizarTipoCliente() {
+        const esEmpresa = tipoClienteSelect.value === 'empresa';
+        grupoCif.style.display = esEmpresa ? 'block' : 'none';
+        grupoRepresentante.style.display = esEmpresa ? 'block' : 'none';
+        labelDni.textContent = esEmpresa ? 'DNI / NIE del representante' : 'DNI / NIE';
+    }
+
+    tipoClienteSelect.addEventListener('change', actualizarTipoCliente);
+    actualizarTipoCliente();
+});
+</script>
 {% endblock %}
