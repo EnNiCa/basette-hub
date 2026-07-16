@@ -17,7 +17,7 @@ def listar_usuarios():
 
     cursor.execute(
         """
-        SELECT u.id, u.nombre, u.email, u.rol, u.activo, u.fecha_alta,
+        SELECT u.id, u.nombre, u.dni, u.email, u.rol, u.activo, u.fecha_alta,
                j.nombre AS jefe_nombre,
                ub.fecha_baja AS fecha_baja_actual
         FROM usuarios u

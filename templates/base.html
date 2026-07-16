@@ -19,9 +19,7 @@
                     <li><a href="{{ url_for('ventas.listar_ventas', modulo='placas_solares') }}">Placas solares</a></li>
                 </ul>
             </li>
-            {% if session['rol'] == 'admin' %}
-                <li><a href="{{ url_for('usuarios.listar_usuarios') }}">Usuarios</a></li>
-            {% endif %}
+
             <li class="nav-perfil">
                 <a href="#" class="perfil-toggle">
                     <span class="perfil-nombre">{{ session['nombre'] }}</span>
@@ -34,6 +32,9 @@
                 </a>
                 <ul class="dropdown dropdown-derecha">
                     <li><a href="#">Mi perfil</a></li>
+                    {% if session['rol'] == 'admin' %}
+                        <li><a href="{{ url_for('usuarios.listar_usuarios') }}">Gestionar usuarios</a></li>
+                    {% endif %}
                     <li><a href="#">Configuración</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Cerrar sesión</a></li>
                 </ul>
