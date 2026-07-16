@@ -87,7 +87,7 @@ def nueva_venta():
         dni = request.form.get('dni', '').strip().upper()
         cif = request.form.get('cif', '').strip().upper()
         tipo_cliente = request.form.get('tipo_cliente', 'particular')
-        nombre_representante = request.form.get('nombre_representante', '').strip()
+        razon_social = request.form.get('razon_social', '').strip()
         telefono = request.form.get('telefono', '').strip()
         cups = request.form.get('cups', '').strip().upper()
         numero_cuenta = request.form.get('numero_cuenta', '').strip().upper()
@@ -99,7 +99,7 @@ def nueva_venta():
             errores.append('El DNI/NIE debe tener un formato válido (ej: 12345678A o X1234567A).')
         if tipo_cliente == 'empresa' and not cif_valido(cif):
             errores.append('El CIF debe tener un formato válido (ej: B12345678).')
-        if tipo_cliente == 'empresa' and not nombre_representante:
+        if tipo_cliente == 'empresa' and not razon_social:
             errores.append('Debes indicar el nombre del representante legal.')
         if tipo_cliente == 'empresa' and not dni_valido(dni):
             errores.append('El DNI del representante debe tener un formato válido.')
@@ -127,7 +127,7 @@ def nueva_venta():
             """
             INSERT INTO ventas
                 (comercial_id, modulo, tipo_energia, compania_id, tarifa_id, canal_id,
-                nombre, apellidos, tipo_cliente, direccion, cp, dni, cif, nombre_representante,
+                nombre, apellidos, tipo_cliente, direccion, cp, dni, cif, razon_social,
                 cups, telefono, email, numero_cuenta, observaciones, estado)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
@@ -145,7 +145,7 @@ def nueva_venta():
                 cp or None,
                 dni,
                 cif or None,
-                nombre_representante or None,
+                razon_social or None,
                 cups or None,
                 telefono or None,
                 request.form.get('email'),
@@ -272,7 +272,7 @@ def editar_venta(venta_id):
         dni = request.form.get('dni', '').strip().upper()
         cif = request.form.get('cif', '').strip().upper()
         tipo_cliente = request.form.get('tipo_cliente', 'particular')
-        nombre_representante = request.form.get('nombre_representante', '').strip()
+        razon_social = request.form.get('razon_social', '').strip()
         telefono = request.form.get('telefono', '').strip()
         cups = request.form.get('cups', '').strip().upper()
         numero_cuenta = request.form.get('numero_cuenta', '').strip().upper()
@@ -284,7 +284,7 @@ def editar_venta(venta_id):
             errores.append('El DNI/NIE debe tener un formato válido (ej: 12345678A o X1234567A).')
         if tipo_cliente == 'empresa' and not cif_valido(cif):
             errores.append('El CIF debe tener un formato válido (ej: B12345678).')
-        if tipo_cliente == 'empresa' and not nombre_representante:
+        if tipo_cliente == 'empresa' and not razon_social:
             errores.append('Debes indicar el nombre del representante legal.')
         if tipo_cliente == 'empresa' and not dni_valido(dni):
             errores.append('El DNI del representante debe tener un formato válido.')

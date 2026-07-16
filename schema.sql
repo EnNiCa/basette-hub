@@ -64,7 +64,7 @@ CREATE TABLE ventas (
     cp VARCHAR(5),
     dni VARCHAR(15),
     cif VARCHAR(15),
-    nombre_representante VARCHAR(150),
+    razon_social VARCHAR(150),
     cups VARCHAR(30),
     telefono VARCHAR(30),
     email VARCHAR(160),

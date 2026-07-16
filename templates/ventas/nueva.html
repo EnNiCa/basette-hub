@@ -95,8 +95,8 @@
         </div>
 
         <div class="form-grupo" id="grupo-representante" style="display: none;">
-            <label for="nombre_representante">Nombre del representante</label>
-            <input type="text" id="nombre_representante" name="nombre_representante">
+            <label for="nombre_representante">Razón social</label>
+            <input type="text" id="razon-social" name="razon-social">
         </div>
 
         <div class="form-grupo">
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!esEmpresa) {
             document.getElementById('cif').value = '';
-            document.getElementById('nombre_representante').value = '';
+            document.getElementById('razon_social').value = '';
         }
     }
 
