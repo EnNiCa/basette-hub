@@ -135,7 +135,7 @@ def editar_usuario(usuario_id):
             usuario.update(request.form.to_dict())
             usuario['id'] = usuario_id
             return render_template('usuarios/editar.html', usuario=usuario, jefes=jefes)
-
+        
         if password:
             password_hash = generate_password_hash(password)
             cursor.execute(
