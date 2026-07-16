@@ -400,8 +400,13 @@ td select {
     background: #1d4ed8;
 }
 
-.login-card .mensajes-flash {
-    margin: 0 0 8px;
+.login-card .mensajes-flash li {
+    text-align: center;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 12px 14px;
+    border: none;
+    color: red
 }
 
 /* ===== Formulario de nueva venta ===== */
@@ -450,12 +455,13 @@ td select {
 .form-grid input,
 .form-grid select,
 .form-grid textarea {
-    width: 100%;
+    width: auto;
     padding: 9px 12px;
     border: 1px solid var(--gris-borde);
     border-radius: 6px;
     font-size: 0.9rem;
     font-family: inherit;
+    margin: 0;
 }
 
 .form-grid input:focus,
@@ -464,6 +470,14 @@ td select {
     outline: none;
     border-color: var(--azul-acento);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.form-grid label.label-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: auto;
+    margin-top: 8px;
 }
 
 .formulario-card button[type="submit"] {
@@ -482,6 +496,10 @@ td select {
 }
 
 .celda-accion {
+    text-align: center;
+}
+
+.th-centrado {
     text-align: center;
 }
 

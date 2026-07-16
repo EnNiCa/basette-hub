@@ -4,6 +4,7 @@
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    dni VARCHAR(15),
     nombre VARCHAR(120) NOT NULL,
     email VARCHAR(160) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
@@ -191,4 +192,12 @@ CREATE TABLE incidencia_archivos (
     ruta_archivo VARCHAR(500) NOT NULL,
     fecha_subida DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (incidencia_id) REFERENCES incidencias(id)
+);
+
+CREATE TABLE usuario_bajas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    fecha_baja DATE NOT NULL,
+    fecha_reincorporacion DATE NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );

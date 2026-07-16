@@ -11,23 +11,27 @@
     <thead>
         <tr>
             <th>Nombre</th>
+            <th>DNI</th>
             <th>Email</th>
             <th>Rol</th>
             <th>Jefe de equipo</th>
             <th>Activo</th>
             <th>Fecha alta</th>
-            <th>Acciones</th>
+            <th>Fecha baja</th>
+            <th class="th-centrado">Acciones</th>
         </tr>
     </thead>
     <tbody>
         {% for usuario in usuarios %}
         <tr>
             <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.dni or '-' }}</td>
             <td>{{ usuario.email }}</td>
             <td>{{ usuario.rol|replace('_', ' ')|capitalize }}</td>
             <td>{{ usuario.jefe_nombre or '-' }}</td>
             <td>{{ 'Sí' if usuario.activo else 'No' }}</td>
             <td>{{ usuario.fecha_alta.strftime('%d/%m/%Y') if usuario.fecha_alta else '-' }}</td>
+            <td>{{ usuario.fecha_baja_actual.strftime('%d/%m/%Y') if usuario.fecha_baja_actual else '-' }}</td>
             <td class="celda-accion">
                 <a href="{{ url_for('usuarios.editar_usuario', usuario_id=usuario.id) }}" class="boton-tabla" title="Editar">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -39,7 +43,7 @@
         </tr>
         {% else %}
         <tr>
-            <td colspan="7">No hay usuarios todavía.</td>
+            <td colspan="9">No hay usuarios todavía.</td>
         </tr>
         {% endfor %}
     </tbody>

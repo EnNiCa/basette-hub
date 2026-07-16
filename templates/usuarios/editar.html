@@ -13,6 +13,13 @@
             <label for="nombre">Nombre</label>
             <input type="text" id="nombre" name="nombre" value="{{ usuario.nombre }}" required>
         </div>
+        
+        <div class="form-grupo">
+            <label for="dni">DNI</label>
+            <input type="text" id="dni" name="dni" value="{{ usuario.dni or '' }}"
+                pattern="[0-9]{8}[A-Za-z]" maxlength="9"
+                title="8 números seguidos de una letra, ej: 12345678A">
+        </div>
 
         <div class="form-grupo">
             <label for="email">Email</label>
@@ -20,7 +27,7 @@
         </div>
 
         <div class="form-grupo">
-            <label for="password">Nueva contraseña (dejar en blanco para no cambiarla)</label>
+            <label for="password">Nueva contraseña</label>
             <input type="password" id="password" name="password" minlength="8">
         </div>
 
@@ -44,7 +51,7 @@
         </div>
 
         <div class="form-grupo">
-            <label>
+            <label class="label-checkbox">
                 <input type="checkbox" name="activo" {% if usuario.activo %}checked{% endif %}>
                 Usuario activo
             </label>

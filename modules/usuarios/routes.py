@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from werkzeug.security import generate_password_hash
 from extensions import get_db
 from auth.decorators import login_requerido, solo_admin
+from utils.validaciones import dni_valido
 
 usuarios_bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 
@@ -17,15 +18,18 @@ def listar_usuarios():
     cursor.execute(
         """
         SELECT u.id, u.nombre, u.email, u.rol, u.activo, u.fecha_alta,
-               j.nombre AS jefe_nombre
+               j.nombre AS jefe_nombre,
+               ub.fecha_baja AS fecha_baja_actual
         FROM usuarios u
         LEFT JOIN usuarios j ON u.jefe_id = j.id
+        LEFT JOIN usuario_bajas ub ON u.id = ub.usuario_id AND ub.fecha_reincorporacion IS NULL
         ORDER BY u.nombre
         """
     )
     usuarios = cursor.fetchall()
 
     return render_template('usuarios/listado.html', usuarios=usuarios)
+
 
 @usuarios_bp.route('/nuevo', methods=['GET', 'POST'])
 @solo_admin
@@ -35,6 +39,7 @@ def nuevo_usuario():
 
     if request.method == 'POST':
         nombre = request.form.get('nombre', '').strip()
+        dni = request.form.get('dni', '').strip().upper()
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
         rol = request.form.get('rol')
@@ -43,6 +48,8 @@ def nuevo_usuario():
         errores = []
         if not nombre:
             errores.append('El nombre es obligatorio.')
+        if dni and not dni_valido(dni):
+            errores.append('El DNI debe tener 8 dígitos seguidos de una letra (ej: 12345678A).')
         if not email:
             errores.append('El email es obligatorio.')
         if len(password) < 8:
@@ -67,9 +74,9 @@ def nuevo_usuario():
         password_hash = generate_password_hash(password)
 
         cursor.execute(
-            "INSERT INTO usuarios (nombre, email, password_hash, rol, jefe_id) VALUES (%s, %s, %s, %s, %s)",
-            (nombre, email, password_hash, rol, jefe_id)
-        )
+            "INSERT INTO usuarios (nombre, dni, email, password_hash, rol, jefe_id) VALUES (%s, %s, %s, %s, %s, %s)",
+            (nombre, dni or None, email, password_hash, rol, jefe_id)
+)
         db.commit()
         flash('Usuario creado correctamente.', 'exito')
         return redirect(url_for('usuarios.listar_usuarios'))
@@ -95,15 +102,19 @@ def editar_usuario(usuario_id):
 
     if request.method == 'POST':
         nombre = request.form.get('nombre', '').strip()
+        dni = request.form.get('dni', '').strip().upper()
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
         rol = request.form.get('rol')
         jefe_id = request.form.get('jefe_id') or None
-        activo = request.form.get('activo') == 'on'
+        activo_nuevo = request.form.get('activo') == 'on'
+        activo_anterior = usuario['activo']
 
         errores = []
         if not nombre:
             errores.append('El nombre es obligatorio.')
+        if dni and not dni_valido(dni):
+            errores.append('El DNI debe tener 8 dígitos seguidos de una letra (ej: 12345678A).')
         if not email:
             errores.append('El email es obligatorio.')
         if password and len(password) < 8:
@@ -128,13 +139,28 @@ def editar_usuario(usuario_id):
         if password:
             password_hash = generate_password_hash(password)
             cursor.execute(
-                "UPDATE usuarios SET nombre=%s, email=%s, rol=%s, jefe_id=%s, activo=%s, password_hash=%s WHERE id=%s",
-                (nombre, email, rol, jefe_id, activo, password_hash, usuario_id)
+                "UPDATE usuarios SET nombre=%s, dni=%s, email=%s, rol=%s, jefe_id=%s, activo=%s, password_hash=%s WHERE id=%s",
+                (nombre, dni or None, email, rol, jefe_id, activo_nuevo, password_hash, usuario_id)
             )
         else:
             cursor.execute(
-                "UPDATE usuarios SET nombre=%s, email=%s, rol=%s, jefe_id=%s, activo=%s WHERE id=%s",
-                (nombre, email, rol, jefe_id, activo, usuario_id)
+                "UPDATE usuarios SET nombre=%s, dni=%s, email=%s, rol=%s, jefe_id=%s, activo=%s WHERE id=%s",
+                (nombre, dni or None, email, rol, jefe_id, activo_nuevo, usuario_id)
+            )
+
+        if activo_anterior and not activo_nuevo:
+            cursor.execute(
+                "INSERT INTO usuario_bajas (usuario_id, fecha_baja) VALUES (%s, CURDATE())",
+                (usuario_id,)
+            )
+        elif not activo_anterior and activo_nuevo:
+            cursor.execute(
+                """
+                UPDATE usuario_bajas SET fecha_reincorporacion = CURDATE()
+                WHERE usuario_id = %s AND fecha_reincorporacion IS NULL
+                ORDER BY fecha_baja DESC LIMIT 1
+                """,
+                (usuario_id,)
             )
 
         db.commit()
