@@ -62,6 +62,14 @@
             </select>
         </div>
 
+        <div class="form-grupo">
+            <label for="tipo_cliente">Tipo de cliente</label>
+            <select id="tipo_cliente" name="tipo_cliente" required>
+                <option value="particular">Particular</option>
+                <option value="empresa">Empresa</option>
+            </select>
+        </div>
+
         <div class="form-seccion-titulo"><h3>Datos del cliente</h3></div>
 
         <div class="form-grupo">
@@ -74,11 +82,21 @@
             <input type="text" id="apellidos" name="apellidos" required>
         </div>
 
-        <div class="form-grupo">
-            <label for="dni">DNI</label>
-            <input type="text" id="dni" name="dni" required
-                   pattern="[0-9]{8}[A-Za-z]" maxlength="9"
-                   title="8 números seguidos de una letra, ej: 12345678A">
+        <div class="form-grupo" id="grupo-dni">
+            <label for="dni">DNI / NIE</label>
+            <input type="text" id="dni" name="dni"
+                title="DNI (12345678A) o NIE (X1234567A)">
+        </div>
+
+        <div class="form-grupo" id="grupo-cif" style="display: none;">
+            <label for="cif">CIF de la empresa</label>
+            <input type="text" id="cif" name="cif"
+                title="Ej: B12345678">
+        </div>
+
+        <div class="form-grupo" id="grupo-representante" style="display: none;">
+            <label for="nombre_representante">Nombre del representante</label>
+            <input type="text" id="nombre_representante" name="nombre_representante">
         </div>
 
         <div class="form-grupo">
@@ -136,6 +154,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const companiaSelect = document.getElementById('compania_id');
     const tarifaSelect = document.getElementById('tarifa_id');
 
+    const tipoClienteSelect = document.getElementById('tipo_cliente');
+    const grupoCif = document.getElementById('grupo-cif');
+    const grupoRepresentante = document.getElementById('grupo-representante');
+    const labelDni = document.getElementById('label-dni');
+
     function actualizarFormulario() {
         const moduloActual = moduloSelect.value;
 
@@ -153,7 +176,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function actualizarTipoCliente() {
+        const esEmpresa = tipoClienteSelect.value === 'empresa';
+        grupoCif.style.display = esEmpresa ? 'block' : 'none';
+        grupoRepresentante.style.display = esEmpresa ? 'block' : 'none';
+        labelDni.textContent = esEmpresa ? 'DNI / NIE del representante' : 'DNI / NIE';
+
+        if (!esEmpresa) {
+            document.getElementById('cif').value = '';
+            document.getElementById('nombre_representante').value = '';
+        }
+    }
+
     moduloSelect.addEventListener('change', actualizarFormulario);
+    tipoClienteSelect.addEventListener('change', actualizarTipoCliente);
 });
 </script>
 {% endblock %}
