@@ -191,6 +191,11 @@ def eliminar_venta(venta_id):
         abort(404)
         
     cursor.execute("DELETE FROM venta_archivos WHERE venta_id = %s", (venta_id,))
+    cursor.execute("DELETE FROM bajas WHERE venta_id = %s", (venta_id,))
+    cursor.execute("DELETE FROM renovaciones WHERE venta_id = %s", (venta_id,))
+    cursor.execute("DELETE FROM incidencias WHERE venta_id = %s", (venta_id,))
+    cursor.execute("DELETE FROM contrato_historial WHERE contrato_id IN (SELECT id FROM contratos WHERE venta_id = %s)", (venta_id,))
+    cursor.execute("DELETE FROM contratos WHERE venta_id = %s", (venta_id,))
     cursor.execute("DELETE FROM ventas WHERE id = %s", (venta_id,))
     db.commit()
     

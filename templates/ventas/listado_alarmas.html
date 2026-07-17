@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block titulo %}Ventas - Alarmas{% endblock %}
+
+{% block contenido %}
+<h1>Ventas - Alarmas</h1>
+<a href="{{ url_for('ventas.nueva_venta') }}" class="boton-nuevo">+ Nueva venta</a>
+
+{% include "ventas/_buscador.html" %}
+
+<div class="tabla-contenedor">
+    <table>
+        <thead>
+            <tr>
+                {% include "ventas/_cabeceras_comunes.html" %}
+                {% include "ventas/_cabeceras_comunes_final.html" %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                {% include "ventas/_celdas_comunes.html" %}
+                {% include "ventas/_celdas_comunes_final.html" %}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="30">No hay venta de alarmas todavía</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
