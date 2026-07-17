@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block titulo %}Liquidación - {{ venta.nombre }} {{ venta.apellidos }}{% endblock %}
+
+{% block contenido %}
+<a href="{{ origen }}" class="boton-volver">← Volver al listado</a>
+<div class="formulario-titulo">
+    <h1>Liquidación: {{ venta.nombre }} {{ venta.apellidos }}</h1>
+</div>
+
+<div class="formulario-card">
+<form method="POST" action="{{ url_for('liquidaciones.editar_liquidacion_venta', venta_id=venta.id) }}">
+    <input type="hidden" name="origen" value="{{ origen }}">
+
+    <div class="form-grid">
+        <div class="form-seccion-titulo"><h3>Liquidación con la compañía</h3></div>
+
+        <div class="form-grupo">
+            <label for="fecha_liquidacion">Fecha liquidación</label>
+            <input type="date" id="fecha_liquidacion" name="fecha_liquidacion" value="{{ venta.fecha_liquidacion.strftime('%Y-%m-%d') if venta.fecha_liquidacion else '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="importe_liquidar">Importe a liquidar (€)</label>
+            <input type="number" step="0.01" id="importe_liquidar" name="importe_liquidar" value="{{ venta.importe_liquidar if venta.importe_liquidar is not none else '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="fecha_descomision">Fecha descomisión</label>
+            <input type="date" id="fecha_descomision" name="fecha_descomision" value="{{ venta.fecha_descomision.strftime('%Y-%m-%d') if venta.fecha_descomision else '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="importe_descomisionado">Importe descomisionado (€)</label>
+            <input type="number" step="0.01" id="importe_descomisionado" name="importe_descomisionado" value="{{ venta.importe_descomisionado if venta.importe_descomisionado is not none else '' }}">
+        </div>
+
+        <div class="form-seccion-titulo"><h3>Comisión del comercial</h3></div>
+
+        <div class="form-grupo">
+            <label for="fecha_pago_comercial">Fecha pago comercial</label>
+            <input type="date" id="fecha_pago_comercial" name="fecha_pago_comercial" value="{{ venta.fecha_pago_comercial.strftime('%Y-%m-%d') if venta.fecha_pago_comercial else '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="importe_pago_comercial">Importe pago comercial (€)</label>
+            <input type="number" step="0.01" id="importe_pago_comercial" name="importe_pago_comercial" value="{{ venta.importe_pago_comercial if venta.importe_pago_comercial is not none else '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="fecha_descomision_comercial">Fecha descomisión comercial</label>
+            <input type="date" id="fecha_descomision_comercial" name="fecha_descomision_comercial" value="{{ venta.fecha_descomision_comercial.strftime('%Y-%m-%d') if venta.fecha_descomision_comercial else '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="importe_descomisionado_comercial">Importe descomisión comercial (€)</label>
+            <input type="number" step="0.01" id="importe_descomisionado_comercial" name="importe_descomisionado_comercial" value="{{ venta.importe_descomisionado_comercial if venta.importe_descomisionado_comercial is not none else '' }}">
+        </div>
+    </div>
+
+    <button type="submit">Guardar liquidación</button>
+</form>
+</div>
+{% endblock %}
