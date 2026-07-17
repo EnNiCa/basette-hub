@@ -20,11 +20,11 @@
 <td>{{ venta.importe_liquidar if venta.importe_liquidar is not none else '-' }}</td>
 <td>{{ venta.fecha_descomision.strftime('%d/%m/%Y') if venta.fecha_descomision else '-' }}</td>
 <td>{{ venta.importe_descomisionado if venta.importe_descomisionado is not none else '-' }}</td>
-{% endif %}
 <td>{{ venta.fecha_pago_comercial.strftime('%d/%m/%Y') if venta.fecha_pago_comercial else '-' }}</td>
 <td>{{ venta.importe_pago_comercial if venta.importe_pago_comercial is not none else '-' }}</td>
 <td>{{ venta.fecha_descomision_comercial.strftime('%d/%m/%Y') if venta.fecha_descomision_comercial else '-' }}</td>
 <td>{{ venta.importe_descomisionado_comercial if venta.importe_descomisionado_comercial is not none else '-' }}</td>
+{% endif %}
 <td>{{ venta.observaciones or '-' }}</td>
 <td class="celda-accion">
     <a href="{{ url_for('ventas.ver_archivos', venta_id=venta.id, origen=request.full_path) }}" class="boton-tabla" title="Ver archivos">
