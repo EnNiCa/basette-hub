@@ -523,24 +523,53 @@ td select {
     color: var(--azul-oscuro);
 }
 
-/* ===== Botón "volver" ===== */
-.boton-volver {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+/* ===== Botón "eliminar" ===== */
+.boton-eliminar {
+    border-color: #dc2626;
+    color: #dc2626;
+    margin-left: 4px;
+}
+
+.boton-eliminar:hover {
+    background: #dc2626;
+    color: white;
+}
+
+/* ===== Modal para eliminar y botones ===== */
+.modal-botones {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.boton-eliminar-solido {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.boton-eliminar-solido:hover {
+    background: #b91c1c;
+}
+
+.boton-cancelar-modal {
     background: white;
     color: var(--texto);
     border: 1px solid var(--gris-borde);
-    padding: 7px 14px;
+    padding: 9px 18px;
     border-radius: 6px;
     font-size: 0.85rem;
-    margin-bottom: 16px;
+    font-weight: 600;
 }
 
-.boton-volver:hover {
+.boton-cancelar-modal:hover {
     background: var(--gris-fondo);
     border-color: #cbd5e1;
-    color: var(--azul-oscuro);
 }
 
 /* ===== Barra de herramientas ===== */

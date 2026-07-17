@@ -179,6 +179,25 @@ def nueva_venta():
         canales=canales
     )
     
+@ventas_bp.route('/<int:venta_id>/eliminar', methods=['POST'])
+@solo_admin
+def eliminar_venta(venta_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    
+    cursor.execute("SELECT modulo FROM ventas WHERE id = %s", (venta_id,))
+    venta = cursor.fetchone()
+    if venta is None:
+        abort(404)
+        
+    cursor.execute("DELETE FROM venta_archivos WHERE venta_id = %s", (venta_id,))
+    cursor.execute("DELETE FROM ventas WHERE id = %s", (venta_id,))
+    db.commit()
+    
+    flash('Venta eliminada correctamente.', 'exito')
+    modulo_actual = request.form.get('modulo_actual', venta['modulo'])
+    return redirect(url_for('ventas.listar_ventas', modulo=modulo_actual))
+    
 @ventas_bp.route('/<int:venta_id>/archivos')
 @login_requerido
 def ver_archivos(venta_id):

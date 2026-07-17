@@ -64,6 +64,17 @@
     </div>
 </div>
 
+<div id="modal-confirmar" class="modal-overlay" style="display: none;">
+    <div class="modal-caja">
+        <h3 id="modal-confirmar-titulo">¿Estás seguro?</h3>
+        <p id="modal-confirmar-texto">Esta acción no se puede deshacer.</p>
+        <div class="modal-botones">
+            <button type="button" id="modal-confirmar-cancelar" class="boton-cancelar-modal">Cancelar</button>
+            <button type="button" id="modal-confirmar-aceptar" class="boton-eliminar-solido">Eliminar</button>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const TIEMPO_AVISO = 29 * 60 * 1000;
@@ -115,6 +126,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     reiniciarTemporizadores();
 });
+
+function confirmarAccion(formulario, mensaje) {
+    const modal = document.getElementById('modal-confirmar');
+    const texto = document.getElementById('modal-confirmar-texto');
+    const btnAceptar = document.getElementById('modal-confirmar-aceptar');
+    const btnCancelar = document.getElementById('modal-confirmar-cancelar');
+
+    texto.textContent = mensaje;
+    modal.style.display = 'flex';
+
+    function cerrar() {
+        modal.style.display = 'none';
+        btnAceptar.removeEventListener('click', aceptar);
+        btnCancelar.removeEventListener('click', cerrar);
+    }
+
+    function aceptar() {
+        cerrar();
+        formulario.submit();
+    }
+
+    btnAceptar.addEventListener('click', aceptar);
+    btnCancelar.addEventListener('click', cerrar);
+}
 </script>
 </body>
 </html>
