@@ -455,7 +455,7 @@ td select {
 .form-grid input,
 .form-grid select,
 .form-grid textarea {
-    width: auto;
+    width: 100%;
     padding: 9px 12px;
     border: 1px solid var(--gris-borde);
     border-radius: 6px;

@@ -23,7 +23,7 @@
         {% if venta.modulo == 'energia' %}
         <div class="form-grupo">
             <label for="tipo_energia">Tipo de energía</label>
-            <select id="tipo_energia" name="tipo_energia">
+            <select id="tipo_energia" name="tipo_energia" required>
                 <option value="">-- Selecciona --</option>
                 <option value="luz" {% if venta.tipo_energia == 'luz' %}selected{% endif %}>Luz</option>
                 <option value="gas" {% if venta.tipo_energia == 'gas' %}selected{% endif %}>Gas</option>
@@ -50,9 +50,9 @@
         </div>
 
         <div class="form-grupo">
-            <label for="canal_id">Canal (opcional)</label>
-            <select id="canal_id" name="canal_id">
-                <option value="">-- Sin especificar --</option>
+            <label for="canal_id">Canal</label>
+            <select id="canal_id" name="canal_id" required>
+                <option value="">-- Selecciona --</option>
                 {% for canal in canales %}
                 <option value="{{ canal.id }}" {% if canal.id == venta.canal_id %}selected{% endif %}>{{ canal.nombre }}</option>
                 {% endfor %}
@@ -143,9 +143,6 @@
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const rolSelect = document.getElementById('rol');
-    // (si esto es de usuarios, ignóralo aquí — en editar.html de VENTAS sería distinto, revisa abajo)
-
     const tipoClienteSelect = document.getElementById('tipo_cliente');
     const grupoCif = document.getElementById('grupo-cif');
     const grupoRepresentante = document.getElementById('grupo-representante');

@@ -25,7 +25,7 @@
 
         <div class="form-grupo" id="grupo-tipo-energia" style="display: none;">
             <label for="tipo_energia">Tipo de energía</label>
-            <select id="tipo_energia" name="tipo_energia">
+            <select id="tipo_energia" name="tipo_energia", required>
                 <option value="">-- Selecciona --</option>
                 <option value="luz" {% if valores and valores.tipo_energia == 'luz' %}selected{% endif %}>Luz</option>
                 <option value="gas" {% if valores and valores.tipo_energia == 'gas' %}selected{% endif %}>Gas</option>
@@ -59,9 +59,9 @@
         </div>
 
         <div class="form-grupo">
-            <label for="canal_id">Canal (opcional)</label>
-            <select id="canal_id" name="canal_id">
-                <option value="">-- Sin especificar --</option>
+            <label for="canal_id">Canal</label>
+            <select id="canal_id" name="canal_id" required>
+                <option value="">-- Selecciona --</option>
                 {% for canal in canales %}
                 <option value="{{ canal.id }}" {% if valores and valores.canal_id == canal.id|string %}selected{% endif %}>
                     {{ canal.nombre }}
@@ -167,8 +167,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function actualizarFormulario() {
         const moduloActual = moduloSelect.value;
+        const tipoEnergiaSelect = document.getElementById('tipo_energia');
 
         grupoTipoEnergia.style.display = (moduloActual === 'energia') ? 'block' : 'none';
+        tipoEnergiaSelect.required = (moduloActual === 'energia');
+
         if (moduloActual !== 'energia') {
             document.getElementById('tipo_energia').value = '';
         }
