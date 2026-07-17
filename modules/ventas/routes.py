@@ -307,6 +307,9 @@ def editar_venta(venta_id):
         cups = request.form.get('cups', '').strip().upper()
         numero_cuenta = request.form.get('numero_cuenta', '').strip().upper()
         cp = request.form.get('cp', '').strip()
+        fecha_firma = request.form.get('fecha_firma') or None
+        fecha_activacion = request.form.get('fecha_activacion') or None
+        fecha_baja = request.form.get('fecha_baja') or None
 
         errores = []
         if tipo_cliente == 'particular' and not dni_valido(dni):
@@ -339,9 +342,11 @@ def editar_venta(venta_id):
             tarifas = cursor.fetchall()
             cursor.execute("SELECT id, nombre FROM canales")
             canales = cursor.fetchall()
+            cursor.execute("SELECT id, fecha_baja, motivo FROM bajas WHERE venta_id = %s", (venta_id,))
+            baja = cursor.fetchone()
             venta.update(request.form.to_dict())
             venta['id'] = venta_id
-            return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales, origen=origen)
+            return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales, origen=origen, baja=baja)
 
         cursor.execute(
             """
@@ -349,7 +354,8 @@ def editar_venta(venta_id):
                 tipo_energia = %s, compania_id = %s, tarifa_id = %s, canal_id = %s,
                 nombre = %s, apellidos = %s, tipo_cliente = %s, direccion = %s, cp = %s,
                 dni = %s, cif = %s, razon_social = %s, cups = %s,
-                telefono = %s, email = %s, numero_cuenta = %s, observaciones = %s
+                telefono = %s, email = %s, numero_cuenta = %s, observaciones = %s,
+                fecha_firma = %s, fecha_activacion = %s
             WHERE id = %s
             """,
             (
@@ -370,9 +376,29 @@ def editar_venta(venta_id):
                 request.form.get('email'),
                 numero_cuenta or None,
                 request.form.get('observaciones'),
+                fecha_firma,
+                fecha_activacion,
                 venta_id,
             )
         )
+
+        cursor.execute("SELECT id FROM bajas WHERE venta_id = %s", (venta_id,))
+        baja_existente = cursor.fetchone()
+
+        if fecha_baja:
+            if baja_existente:
+                cursor.execute(
+                    "UPDATE bajas SET fecha_baja = %s WHERE venta_id = %s",
+                    (fecha_baja, venta_id)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO bajas (venta_id, fecha_baja) VALUES (%s, %s)",
+                    (venta_id, fecha_baja)
+                )
+        elif baja_existente:
+            cursor.execute("DELETE FROM bajas WHERE venta_id = %s", (venta_id,))
+
         db.commit()
         flash('Venta actualizada correctamente.', 'exito')
         return redirect(origen)
@@ -387,8 +413,10 @@ def editar_venta(venta_id):
     tarifas = cursor.fetchall()
     cursor.execute("SELECT id, nombre FROM canales")
     canales = cursor.fetchall()
+    cursor.execute("SELECT id, fecha_baja, motivo FROM bajas WHERE venta_id = %s", (venta_id,))
+    baja = cursor.fetchone()
 
-    return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales, origen=origen)
+    return render_template('ventas/editar.html', venta=venta, companias=companias, tarifas=tarifas, canales=canales, origen=origen, baja=baja)
 
 def buscar_ventas(modulo_filtro=None, buscar=''):
     db = get_db()

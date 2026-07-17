@@ -133,6 +133,21 @@
                    title="IBAN español, ej: ES61 1234 3456 42 0456323532">
         </div>
 
+        <div class="form-grupo">
+            <label for="fecha_firma">Fecha de firma</label>
+            <input type="date" id="fecha_firma" name="fecha_firma" value="{{ venta.fecha_firma.strftime('%Y-%m-%d') if venta.fecha_firma else '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="fecha_activacion">Fecha de activación</label>
+            <input type="date" id="fecha_activacion" name="fecha_activacion" value="{{ venta.fecha_activacion.strftime('%Y-%m-%d') if venta.fecha_activacion else '' }}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="fecha_baja">Fecha de baja</label>
+            <input type="date" id="fecha_baja" name="fecha_baja" value="{{ baja.fecha_baja.strftime('%Y-%m-%d') if baja else '' }}">
+        </div>
+
         <div class="form-grupo" style="grid-column: 1 / -1;">
             <label for="observaciones">Observaciones</label>
             <textarea id="observaciones" name="observaciones" rows="4">{{ venta.observaciones or '' }}</textarea>
