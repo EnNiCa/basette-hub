@@ -1,5 +1,6 @@
-<td>{{ venta.nombre }} {{ venta.apellidos }}</td>
-<td>{{ venta.dni }}</td>
+<td>{{ venta.razon_social if venta.tipo_cliente == 'empresa' else (venta.nombre + ' ' + venta.apellidos) }}</td>
+<td>{{ venta.dni or '-' }}</td>
+<td>{{ venta.cif or '-' }}</td>
 <td>{{ venta.direccion or '-' }}</td>
 <td>{{ venta.cp or '-' }}</td>
 <td>{{ venta.telefono or '-' }}</td>

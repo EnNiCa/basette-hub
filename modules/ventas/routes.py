@@ -185,7 +185,7 @@ def ver_archivos(venta_id):
     db = get_db()
     cursor = db.cursor(dictionary=True)
 
-    cursor.execute("SELECT id, comercial_id, modulo, nombre, apellidos FROM ventas WHERE id = %s", (venta_id,))
+    cursor.execute("SELECT id, comercial_id, modulo, nombre, apellidos, razon_social FROM ventas WHERE id = %s", (venta_id,))
     venta = cursor.fetchone()
     if venta is None:
         abort(404)

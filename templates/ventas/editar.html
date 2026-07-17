@@ -5,7 +5,8 @@
 {% block contenido %}
 <a href="{{ origen }}" class="boton-volver">← Volver al listado</a>
 <div class="formulario-titulo">
-    <h1>Editar venta: {{ venta.nombre }} {{ venta.apellidos }}</h1>
+    <h1>Editar venta: {{ venta.nombre }} {{ venta.apellidos }}
+    {% if venta.razon_social %} — {{ venta.razon_social }}{% endif %}</h1>
 </div>
 
 <div class="formulario-card">

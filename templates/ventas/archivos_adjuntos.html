@@ -4,7 +4,9 @@
 
 {% block contenido %}
 <a href="{{ origen }}" class="boton-volver">← Volver al listado</a>
-<h1>Archivos adjuntos: {{ venta.nombre }} {{ venta.apellidos }}</h1>
+<h1>Archivos adjuntos: {{ venta.nombre }} {{ venta.apellidos }}
+    {% if venta.razon_social %} — {{ venta.razon_social }}{% endif %}
+</h1>
 
 {% set categorias_info = [
     ('dni', 'DNI'),
